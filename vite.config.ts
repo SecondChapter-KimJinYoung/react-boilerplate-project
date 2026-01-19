@@ -1,0 +1,74 @@
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import checker from 'vite-plugin-checker'
+import path from 'path'
+
+// https://vite.dev/config/
+export default defineConfig({
+  // Vite 플러그인 설정
+  plugins: [
+    // React 플러그인: Fast Refresh, JSX 변환 등
+    react(),
+
+    // Tailwind CSS 플러그인: 유틸리티 기반 CSS 프레임워크
+    tailwindcss(),
+
+    // TypeScript 실시간 체크 플러그인
+    // 개발 서버 실행 시 터미널에 에러 표시
+    // ESLint는 ESLint 9 flat config와 호환성 문제로 제외
+    checker({
+      typescript: true, // TypeScript 타입 체크
+      // eslint: ESLint 9 flat config와 vite-plugin-checker 호환성 문제로 비활성화
+      // ESLint 체크는 별도로 'yarn lint' 명령어로 실행
+    }),
+  ],
+
+  // 경로 별칭 설정
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+
+  // 개발 서버 설정
+  server: {
+    port: 3000,
+    open: true,
+    host: true, // 네트워크 접근 가능 (모바일 디바이스 테스트용)
+    // HMR 연결 실패 시 자동 재연결
+    hmr: {
+      overlay: true, // 에러 발생 시 화면에 오버레이 표시
+    },
+  },
+
+  // 개발 중 캐시 무효화 방지
+  optimizeDeps: {
+    // 의존성 변경 시 자동 재빌드
+    force: false,
+  },
+
+  // 빌드 설정
+  build: {
+    target: 'esnext',
+    minify: 'esbuild',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        // 코드 스플리팅: vendor/deps 분리로 초기 로딩 최적화
+        manualChunks(id: string) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor'
+            }
+            return 'deps'
+          }
+        },
+        // 파일명에 해시 포함하여 캐시 무효화 (배포 후 변경사항 즉시 반영)
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash].[ext]',
+      },
+    },
+  },
+})

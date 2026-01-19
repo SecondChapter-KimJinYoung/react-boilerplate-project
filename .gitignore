@@ -1,0 +1,56 @@
+# 로그 파일
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 의존성 / 빌드 출력물
+node_modules
+.pnp.*
+.yarn/*
+dist
+dist-ssr
+build
+out
+.next
+.nuxt
+.output
+.svelte-kit
+coverage
+*.local
+
+# 환경 변수 (.env는 추적 유지)
+.env.*.local
+
+# IDE / 에디터 파일
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS / 캐시 / 기타
+*.pid
+*.seed
+*.tgz
+*.orig
+*.tmp
+*.swp
+*.iml
+.cache
+.temp
+.eslintcache
+.stylelintcache
+.turbo
+.parcel-cache
+.vite/deps
+.vite/cache
