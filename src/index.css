@@ -1,11 +1,26 @@
 /* Tailwind CSS v4 지시문 */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Pretendard 폰트 import */
-@import "pretendard/dist/web/static/pretendard.css";
+@import 'pretendard/dist/web/static/pretendard.css';
 
 :root {
-  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  font-family:
+    'Pretendard Variable',
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    'Helvetica Neue',
+    'Segoe UI',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Malgun Gothic',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
 

@@ -15,6 +15,9 @@ export default defineConfig([
   // 검사 제외할 파일/디렉토리
   globalIgnores(['dist', 'vite.config.ts', '*.config.ts', '*.config.js']),
 
+  // Prettier와 충돌하는 ESLint 규칙 비활성화 (flat config에서는 배열에 직접 추가)
+  prettierConfig,
+
   {
     // 검사 대상 파일
     files: ['src/**/*.{ts,tsx}'],
@@ -50,9 +53,6 @@ export default defineConfig([
 
     // 커스텀 규칙
     rules: {
-      // Prettier와 충돌하는 ESLint 규칙 비활성화
-      ...prettierConfig.rules,
-
       // React 규칙
       ...react.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off', // React 17+ 에서는 불필요
