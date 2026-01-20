@@ -1,0 +1,14 @@
+# 줄바꿈 문자 자동 변환 설정 (UTF-8 인코딩 명시)
+* text=auto eol=lf working-tree-encoding=UTF-8
+
+# 바이너리 파일 제외
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
