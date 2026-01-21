@@ -16,11 +16,20 @@ export default defineConfig({
 
     // TypeScript 실시간 체크 플러그인
     // 개발 서버 실행 시 터미널에 에러 표시
-    // ESLint는 ESLint 9 flat config와 호환성 문제로 제외
     checker({
-      typescript: true, // TypeScript 타입 체크
+      typescript: {
+        tsconfigPath: 'tsconfig.app.json',
+        buildMode: false, // 개발 모드에서만 체크
+        root: './src',
+      },
       // eslint: ESLint 9 flat config와 vite-plugin-checker 호환성 문제로 비활성화
       // ESLint 체크는 별도로 'yarn lint' 명령어로 실행
+      overlay: {
+        initialIsOpen: false, // 초기에는 오버레이 닫힘
+        position: 'tl', // top-left
+        badgeStyle: 'position: fixed; top: 20px; right: 20px; z-index: 9999;',
+      },
+      terminal: true, // 터미널에 에러 출력
     }),
   ],
 
@@ -40,6 +49,8 @@ export default defineConfig({
     hmr: {
       overlay: true, // 에러 발생 시 화면에 오버레이 표시
     },
+    // 에러 출력 설정
+    strictPort: false, // 포트가 사용 중이면 다른 포트 사용
   },
 
   // 개발 중 캐시 무효화 방지
