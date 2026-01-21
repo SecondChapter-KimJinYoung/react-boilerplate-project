@@ -18,9 +18,8 @@ export default defineConfig({
     // 개발 서버 실행 시 터미널에 에러 표시
     checker({
       typescript: {
-        tsconfigPath: 'tsconfig.app.json',
+        tsconfigPath: './tsconfig.app.json',
         buildMode: false, // 개발 모드에서만 체크
-        root: './src',
       },
       // eslint: ESLint 9 flat config와 vite-plugin-checker 호환성 문제로 비활성화
       // ESLint 체크는 별도로 'yarn lint' 명령어로 실행
