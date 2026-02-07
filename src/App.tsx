@@ -4,7 +4,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>React + TypeScript + Vite</h1>
+        <h1>자동화 배포 테스트</h1>
       </header>
     </div>
   );
