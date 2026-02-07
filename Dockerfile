@@ -6,8 +6,7 @@ RUN corepack enable && corepack prepare yarn@stable --activate
 WORKDIR /app
 
 COPY package.json yarn.lock .yarnrc.yml* ./
-COPY .yarn ./.yarn 2>/dev/null || true
-RUN yarn install --immutable
+RUN yarn install --immutable || yarn install --frozen-lockfile
 
 COPY . .
 
