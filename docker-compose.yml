@@ -1,0 +1,14 @@
+# ─────────────────────────────────────
+# 로컬 개발용 (프론트엔드 단독 실행)
+# docker compose up -d
+# ─────────────────────────────────────
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        VITE_API_URL: http://localhost:3001/api
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

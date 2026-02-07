@@ -1,108 +1,95 @@
-name: CI
+name: CI/CD
 
-# 워크플로우 트리거 설정
-# main 브랜치에 push 또는 main으로의 PR이 생성될 때 실행
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  # TypeScript 타입 체크 작업
+  # ─── 품질 검사 (병렬) ──────────────────────────
+
   type-check:
     name: Type Check
     runs-on: ubuntu-latest
     steps:
-      # 저장소 코드 체크아웃
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # Node.js 환경 설정 (버전 20, yarn 캐시 사용)
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version: "20"
+          cache: "yarn"
 
-      # 의존성 패키지 설치
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Enable Corepack
+        run: corepack enable
 
-      # TypeScript 타입 체크
+      - name: Install
+        run: yarn install --immutable
+
       - name: Type check
         run: yarn type-check
 
-  # ESLint 코드 검사 작업 (병렬 실행)
   lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      # 저장소 코드 체크아웃
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # Node.js 환경 설정
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version: "20"
+          cache: "yarn"
 
-      # 의존성 패키지 설치
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Enable Corepack
+        run: corepack enable
 
-      # ESLint 코드 검사 (경고가 있어도 계속 진행)
+      - name: Install
+        run: yarn install --immutable
+
       - name: Lint
         run: yarn lint
         continue-on-error: true
 
-  # Prettier 포맷 검사 작업 (병렬 실행)
   format-check:
     name: Format Check
     runs-on: ubuntu-latest
     steps:
-      # 저장소 코드 체크아웃
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # Node.js 환경 설정
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version: "20"
+          cache: "yarn"
 
-      # 의존성 패키지 설치
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Enable Corepack
+        run: corepack enable
 
-      # Prettier 포맷 검사 (경고가 있어도 계속 진행)
+      - name: Install
+        run: yarn install --immutable
+
       - name: Format check
         run: yarn format:check
         continue-on-error: true
 
-  # 프로덕션 빌드 작업
+  # ─── 빌드 (품질 검사 통과 후) ──────────────────
+
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [type-check, lint, format-check] # 모든 품질 검사 완료 후 실행
+    needs: [type-check, lint, format-check]
     steps:
-      # 저장소 코드 체크아웃
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # Node.js 환경 설정
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn'
+          node-version: "20"
+          cache: "yarn"
 
-      # Vite 빌드 캐시 복원
+      - name: Enable Corepack
+        run: corepack enable
+
+      # Vite 빌드 캐시
       - name: Restore Vite cache
         uses: actions/cache@v4
         with:
@@ -113,15 +100,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-vite-
 
-      # 의존성 패키지 설치
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Install
+        run: yarn install --immutable
 
-      # 프로덕션 빌드 실행
       - name: Build
-        run: yarn build:prod
+        run: yarn build
+        env:
+          VITE_API_URL: ${{ secrets.API_URL }}
 
-      # Vite 빌드 캐시 저장
+      # Vite 캐시 저장
       - name: Save Vite cache
         uses: actions/cache@v4
         if: always()
@@ -131,55 +118,38 @@ jobs:
             node_modules/.vite
           key: ${{ runner.os }}-vite-${{ hashFiles('**/package.json', '**/yarn.lock') }}
 
-      # 빌드 결과물을 아티팩트로 업로드 (7일간 보관)
+      # 빌드 결과물 아티팩트 (7일 보관)
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: frontend-dist
           path: dist
           retention-days: 7
 
-  # 서버 배포 작업 (필요시 활성화)
-  # 배포가 필요할 때 아래 if 조건을 활성화하고 secrets 설정 필요
+  # ─── 배포 (main push일 때만) ───────────────────
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: build # build 작업 완료 후 실행
-    # 배포 비활성화 (서버 설정 완료 후 활성화)
-    if: false # github.event_name == 'push' && github.ref == 'refs/heads/main'
-    # 환경 변수 설정 필요: SSH_PRIVATE_KEY, SSH_HOST, SSH_USER, DEPLOY_PATH
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    timeout-minutes: 10
+
     steps:
-      # 저장소 코드 체크아웃
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # 빌드된 아티팩트 다운로드
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v0.1.10
         with:
-          name: dist
-          path: dist
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/deploy/frontend
+            git fetch origin main
+            git reset --hard origin/main
 
-      # SSH 키 설정 (서버 접속용)
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+            cd /home/deploy
+            docker compose build frontend
+            docker compose up -d frontend
+            docker image prune -f
 
-      # 서버에서 최신 코드 가져오기
-      - name: Pull latest code on server
-        run: |
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.DEPLOY_PATH }} && git fetch origin && git reset --hard origin/${{ github.ref_name }}"
-
-      # 빌드 파일을 서버로 복사
-      - name: Copy build files to server
-        run: |
-          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -r dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/dist/
-
-      # Docker 컨테이너 재빌드 및 재시작
-      - name: Rebuild and restart Docker container
-        run: |
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.DEPLOY_PATH }} && docker-compose down --remove-orphans && docker rm -f personal-coffee-admin 2>/dev/null || true && docker-compose build --no-cache && docker-compose up -d"
-
+            echo "✅ Frontend deployed at $(date)"
