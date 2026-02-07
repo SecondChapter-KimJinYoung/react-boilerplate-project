@@ -1,12 +1,10 @@
 FROM node:20-alpine AS builder
 RUN corepack enable && corepack prepare yarn@stable --activate
 WORKDIR /app
-COPY package.json yarn.lock .yarnrc.yml* ./
-RUN yarn install
 COPY . .
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL}
-RUN yarn build
+RUN yarn install && yarn build
 
 FROM nginx:alpine
 RUN rm /etc/nginx/conf.d/default.conf
