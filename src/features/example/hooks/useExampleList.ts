@@ -10,6 +10,7 @@
 
 import { useState, useMemo } from 'react';
 import { useExampleListQuery, useDeleteManyExamples } from './useExample';
+import type { ExampleItem } from '@/api/example/example.types';
 
 type OrderBy = 'ASC' | 'DESC';
 
@@ -41,7 +42,7 @@ export const useExampleList = () => {
   const isError = query.isError;
 
   // ============ Selection ============
-  const listIdSet = useMemo(() => new Set(list.map((item) => item.id)), [list]);
+  const listIdSet = useMemo(() => new Set(list.map((item: ExampleItem) => item.id)), [list]);
 
   // 현재 리스트에 없는 선택 항목 자동 필터링 (파생 상태)
   // listIds가 변경되면 자동으로 유효하지 않은 항목이 제거됨
@@ -66,7 +67,7 @@ export const useExampleList = () => {
     if (currentSelected.length === list.length) {
       setSelected([]);
     } else {
-      setSelected(list.map((item) => item.id));
+      setSelected(list.map((item: ExampleItem) => item.id));
     }
   };
 

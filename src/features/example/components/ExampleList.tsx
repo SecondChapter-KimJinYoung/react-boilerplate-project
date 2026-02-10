@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
 import { useExampleList } from '../hooks/useExampleList';
 import { EXAMPLE_TABLE_HEAD } from '../constants/example.constants';
+import type { ExampleItem } from '@/api/example/example.types';
 
 const ExampleList = () => {
   const navigate = useNavigate();
@@ -130,7 +131,7 @@ const ExampleList = () => {
                     </td>
                   </tr>
                 ) : (
-                  table.data.list.map((item) => (
+                  table.data.list.map((item: ExampleItem) => (
                     <tr key={item.id} className="group transition-colors hover:bg-gray-50">
                       <td className="w-[40px] border-b border-gray-200 text-center">
                         <div className="flex items-center justify-center py-3">

@@ -5,7 +5,7 @@
 
 import type { ExampleItem } from '@/api/example/example.types';
 
-export const mockExampleList: ExampleItem[] = [
+export const exampleMockList: ExampleItem[] = [
   {
     id: 1,
     name: '닉네임',
@@ -98,13 +98,13 @@ export const mockExampleList: ExampleItem[] = [
   },
 ];
 
-export const mockExampleTotalCount = 10;
+export const exampleMockTotalCount = 10;
 
 /**
  * Example 상세 더미 데이터 생성
  * Detail과 Update 페이지에서 사용
  */
-export const getMockExampleDetail = (id: number) => ({
+export const getExampleMockDetail = (id: number) => ({
   id,
   name: `Example ${id}`,
   description: `Example ${id}에 대한 설명입니다.`,

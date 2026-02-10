@@ -15,8 +15,9 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { EXAMPLE_QUERY_KEYS } from '@/shared/constants/query-keys';
 import { showToast } from '@/shared/components/Toasts/Toast';
-import { mockExampleList, getMockExampleDetail } from '../mocks/exampleData';
+import { exampleMockList, getExampleMockDetail } from '../mocks/example.mock';
 import type {
+  ExampleItem,
   GetExampleListRequest,
   PostExampleRequest,
   PatchExampleRequest,
@@ -32,10 +33,10 @@ const mockExampleApi = {
     await mockApiDelay();
     const { page = 1, size = 10, keyword = '' } = params || {};
 
-    let filteredList = mockExampleList;
+    let filteredList = exampleMockList;
     if (keyword) {
-      filteredList = mockExampleList.filter(
-        (item) =>
+      filteredList = exampleMockList.filter(
+        (item: ExampleItem) =>
           item.name.toLowerCase().includes(keyword.toLowerCase()) ||
           item.email.toLowerCase().includes(keyword.toLowerCase()),
       );
@@ -53,7 +54,7 @@ const mockExampleApi = {
 
   detail: async (id: number) => {
     await mockApiDelay();
-    return getMockExampleDetail(id);
+    return getExampleMockDetail(id);
   },
 
   create: async (data: PostExampleRequest) => {
