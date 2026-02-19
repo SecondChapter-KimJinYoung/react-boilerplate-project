@@ -182,6 +182,81 @@ describe('format', () => {
       expect(format.residentNumber('990101')).toBe('990101');
     });
   });
+
+  describe('currency', () => {
+    it('숫자를 천단위 콤마로 포맷팅한다', () => {
+      expect(format.currency(1000000)).toBe('1,000,000');
+    });
+
+    it('문자열 숫자도 포맷팅한다', () => {
+      expect(format.currency('1000000')).toBe('1,000,000');
+    });
+
+    it('NaN이면 0을 반환한다', () => {
+      expect(format.currency('abc')).toBe('0');
+    });
+
+    it('0을 올바르게 처리한다', () => {
+      expect(format.currency(0)).toBe('0');
+    });
+  });
+
+  describe('won', () => {
+    it('원화 포맷팅 (숫자 + 원)', () => {
+      expect(format.won(1000000)).toBe('1,000,000원');
+    });
+
+    it('문자열 입력도 처리한다', () => {
+      expect(format.won('50000')).toBe('50,000원');
+    });
+  });
+
+  describe('dateDot', () => {
+    it('Date 객체를 YYYY.MM.DD로 포맷팅한다', () => {
+      const date = new Date(2024, 0, 15);
+      expect(format.dateDot(date)).toBe('2024.01.15');
+    });
+
+    it('월과 일이 한 자리일 때 0으로 패딩한다', () => {
+      const date = new Date(2024, 0, 1);
+      expect(format.dateDot(date)).toBe('2024.01.01');
+    });
+  });
+
+  describe('dateTime', () => {
+    it('Date 객체를 YYYY.MM.DD HH:MM으로 포맷팅한다', () => {
+      const date = new Date(2024, 0, 15, 14, 30);
+      expect(format.dateTime(date)).toBe('2024.01.15 14:30');
+    });
+
+    it('시간이 한 자리일 때 0으로 패딩한다', () => {
+      const date = new Date(2024, 0, 1, 9, 5);
+      expect(format.dateTime(date)).toBe('2024.01.01 09:05');
+    });
+  });
+
+  describe('fileSize', () => {
+    it('0 Bytes를 올바르게 표시한다', () => {
+      expect(format.fileSize(0)).toBe('0 Bytes');
+    });
+
+    it('바이트 단위를 표시한다', () => {
+      expect(format.fileSize(500)).toBe('500 Bytes');
+    });
+
+    it('KB 단위를 표시한다', () => {
+      expect(format.fileSize(1024)).toBe('1 KB');
+      expect(format.fileSize(1536)).toBe('1.5 KB');
+    });
+
+    it('MB 단위를 표시한다', () => {
+      expect(format.fileSize(1048576)).toBe('1 MB');
+    });
+
+    it('GB 단위를 표시한다', () => {
+      expect(format.fileSize(1073741824)).toBe('1 GB');
+    });
+  });
 });
 
 // ============================================================================

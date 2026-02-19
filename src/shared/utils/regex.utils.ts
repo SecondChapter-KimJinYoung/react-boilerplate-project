@@ -311,6 +311,82 @@ export const format = {
   carNumber: (num: string): string => {
     return num.replace(/\s+/g, '').toUpperCase();
   },
+
+  // 통화 포맷팅 — 천단위 콤마 (1000000 → 1,000,000)
+  currency: (value: number | string): string => {
+    const num = typeof value === 'string' ? parseInt(value.replace(/\D/g, ''), 10) : value;
+    if (isNaN(num)) return '0';
+    return num.toLocaleString('ko-KR');
+  },
+
+  // 원화 포맷팅 (1000000 → 1,000,000원)
+  won: (value: number | string): string => {
+    const num = typeof value === 'string' ? parseInt(value.replace(/\D/g, ''), 10) : value;
+    if (isNaN(num)) return '0원';
+    return `${num.toLocaleString('ko-KR')}원`;
+  },
+
+  // Date → 2024.01.15
+  dateDot: (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}.${month}.${day}`;
+  },
+
+  // Date → 2024.01.15 14:30
+  dateTime: (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}.${month}.${day} ${hours}:${minutes}`;
+  },
+
+  // ISO 8601 → 2024년 1월 15일
+  dateKorean: (isoString: string): string => {
+    const d = new Date(isoString);
+    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+  },
+
+  // ISO 8601 → 2024년 1월 15일 14시 30분
+  dateTimeKorean: (isoString: string): string => {
+    const d = new Date(isoString);
+    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 ${d.getHours()}시 ${d.getMinutes()}분`;
+  },
+
+  // ISO 8601 → 2024-01-15 14:30:00
+  toDateTimeString: (value: string): string => {
+    const d = new Date(value);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  },
+
+  // 파일 크기 포맷팅 (1024 → 1 KB)
+  fileSize: (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+  },
+
+  // 상대 시간 포맷팅 (ISO → 방금 전, 5분 전, 2시간 전 등)
+  timeAgo: (dateString: string): string => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return '방금 전';
+    if (diffMins < 60) return `${diffMins}분 전`;
+    if (diffHours < 24) return `${diffHours}시간 전`;
+    if (diffDays < 7) return `${diffDays}일 전`;
+    return date.toLocaleDateString('ko-KR');
+  },
 } as const;
 
 // ============================================================================
