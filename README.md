@@ -189,3 +189,35 @@ src/routes/routes.ts    # 경로 상수 추가
 # 4. 2곳 이상에서 쓰는 컴포넌트가 생기면
 src/shared/components/  # atoms → molecules → organisms 분류
 ```
+
+## 커밋 컨벤션
+
+### prefix
+
+| prefix | 용도 | 예시 |
+|--------|------|------|
+| `feat` | 새 기능 | `feat: 로그인 페이지 구현` |
+| `fix` | 버그 수정 | `fix: 토큰 갱신 시 무한 루프 해결` |
+| `refactor` | 코드 구조 개선 (동작 변경 없음) | `refactor: API 에러 핸들링 분리` |
+| `chore` | 설정, 의존성, 빌드 등 | `chore: ESLint 9 마이그레이션` |
+| `docs` | 문서 | `docs: README 환경변수 설명 추가` |
+| `style` | 포맷팅 (코드 의미 변경 없음) | `style: Prettier 적용` |
+| `test` | 테스트 | `test: useExample 훅 단위 테스트` |
+| `perf` | 성능 개선 | `perf: 목록 렌더링 최적화` |
+| `ci` | CI/CD 설정 | `ci: test job 타임아웃 변경` |
+
+### 형식
+
+```
+<prefix>: 주요 메시지 (50자 이내)
+
+* 상세 변경 내용 1
+* 상세 변경 내용 2
+* 상세 변경 내용 3
+```
+
+### 규칙
+
+- 제목은 **한글 OK**, 50자 이내
+- 의미 단위로 커밋 분리 (한 커밋에 여러 성격 혼합 금지)
+- body는 선택사항, 변경이 많을 때 `*` 리스트로 작성
