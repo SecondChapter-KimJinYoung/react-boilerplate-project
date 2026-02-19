@@ -54,3 +54,7 @@ Thumbs.db
 .parcel-cache
 .vite/deps
 .vite/cache
+
+# 생성된 출력물
+eslint-out.txt
+nul

@@ -1,0 +1,14 @@
+# EditorConfig: 에디터 종류와 무관하게 코딩 스타일 강제
+# VS Code, Cursor, WebStorm, IntelliJ 등 모든 에디터에서 동작
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false

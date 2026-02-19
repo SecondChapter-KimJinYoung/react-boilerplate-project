@@ -1,20 +1,6 @@
-/**
- * Example Hook 예제
- *
- * 패턴:
- * - useQuery: 데이터 조회 (list, detail)
- * - useMutation: 데이터 변경 (create, update, delete)
- * - placeholderData: keepPreviousData로 페이지네이션 시 이전 데이터 유지
- * - select: response.payload만 추출하여 사용
- * - invalidateQueries: mutation 후 관련 쿼리 캐시 무효화
- * - showToast: 성공/실패 피드백
- *
- * 현재 상태: 목업 데이터 사용 중 (API 준비 시 실제 API로 전환)
- */
-
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { EXAMPLE_QUERY_KEYS } from '@/shared/constants/query-keys';
-import { showToast } from '@/shared/components/Toasts/Toast';
+import { showToast } from '@/shared/utils/toast.utils';
 import { exampleMockList, getExampleMockDetail } from '../mocks/example.mock';
 import type {
   ExampleItem,
@@ -24,8 +10,6 @@ import type {
 } from '@/api/example/example.types';
 
 // ============ Mock API Functions ============
-// TODO: 실제 API 준비되면 exampleApi로 교체
-
 const mockApiDelay = (ms: number = 500) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const mockExampleApi = {
@@ -59,25 +43,25 @@ const mockExampleApi = {
 
   create: async (data: PostExampleRequest) => {
     await mockApiDelay();
-    console.log('Mock API - Create:', data);
+    if (import.meta.env.DEV) console.warn('[Mock] Create:', data);
     return { success: true };
   },
 
   update: async (id: number, data: PatchExampleRequest) => {
     await mockApiDelay();
-    console.log('Mock API - Update:', id, data);
+    if (import.meta.env.DEV) console.warn('[Mock] Update:', id, data);
     return { success: true };
   },
 
   delete: async (id: number) => {
     await mockApiDelay();
-    console.log('Mock API - Delete:', id);
+    if (import.meta.env.DEV) console.warn('[Mock] Delete:', id);
     return { success: true };
   },
 
   deleteMany: async (ids: number[]) => {
     await mockApiDelay();
-    console.log('Mock API - Delete Many:', ids);
+    if (import.meta.env.DEV) console.warn('[Mock] Delete Many:', ids);
     return { success: true };
   },
 };
@@ -120,7 +104,7 @@ export const useCreateExample = () => {
   return useMutation<{ success: boolean }, Error, PostExampleRequest>({
     mutationFn: (data) => mockExampleApi.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
+      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
       showToast({ message: 'Example이 생성되었습니다.', variant: 'success' });
     },
     onError: (error) => {
@@ -139,8 +123,8 @@ export const useUpdateExample = () => {
   return useMutation<{ success: boolean }, Error, { id: number; data: PatchExampleRequest }>({
     mutationFn: ({ id, data }) => mockExampleApi.update(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
-      queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.detail(variables.id) });
+      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
+      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.detail(variables.id) });
       showToast({ message: 'Example이 수정되었습니다.', variant: 'success' });
     },
     onError: (error) => {
@@ -159,7 +143,7 @@ export const useDeleteExample = () => {
   return useMutation<{ success: boolean }, Error, number>({
     mutationFn: (id) => mockExampleApi.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
+      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
       showToast({ message: 'Example이 삭제되었습니다.', variant: 'success' });
     },
     onError: (error) => {
@@ -178,7 +162,7 @@ export const useDeleteManyExamples = () => {
   return useMutation<{ success: boolean }, Error, number[]>({
     mutationFn: (ids) => mockExampleApi.deleteMany(ids),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
+      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
       showToast({ message: 'Example들이 삭제되었습니다.', variant: 'success' });
     },
     onError: (error) => {

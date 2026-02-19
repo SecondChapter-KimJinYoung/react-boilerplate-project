@@ -14,21 +14,23 @@ export default defineConfig({
     // Tailwind CSS 플러그인: 유틸리티 기반 CSS 프레임워크
     tailwindcss(),
 
-    // TypeScript 실시간 체크 플러그인
-    // 개발 서버 실행 시 터미널에 에러 표시
+    // TypeScript + ESLint 실시간 체크 플러그인
+    // 개발 서버 실행 시 에러를 터미널 + 화면 오버레이에 표시
     checker({
       typescript: {
         tsconfigPath: './tsconfig.app.json',
-        buildMode: false, // 개발 모드에서만 체크
+        buildMode: false,
       },
-      // eslint: ESLint 9 flat config와 vite-plugin-checker 호환성 문제로 비활성화
-      // ESLint 체크는 별도로 'yarn lint' 명령어로 실행
+      eslint: {
+        useFlatConfig: true,
+        lintCommand: 'eslint src',
+      },
       overlay: {
-        initialIsOpen: false, // 초기에는 오버레이 닫힘
-        position: 'tl', // top-left
+        initialIsOpen: true, // 에러 발생 시 즉시 오버레이 표시
+        position: 'tl',
         badgeStyle: 'position: fixed; top: 20px; right: 20px; z-index: 9999;',
       },
-      terminal: true, // 터미널에 에러 출력
+      terminal: true,
     }),
   ],
 

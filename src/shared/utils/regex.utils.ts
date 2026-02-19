@@ -3,7 +3,12 @@
  * @description 검증, 포맷팅, 마스킹, 추출, 정제, 에러 메시지 함수들
  */
 
-import { EMAIL_REGEX, PHONE_REGEX, YOUTUBE_ID_REGEX, HTML_TAG_REGEX } from './patterns';
+import {
+  EMAIL_REGEX,
+  PHONE_REGEX,
+  YOUTUBE_ID_REGEX,
+  HTML_TAG_REGEX,
+} from '@/shared/constants/regex.patterns';
 
 // ============================================================================
 // 검증 함수

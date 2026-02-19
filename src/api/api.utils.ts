@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { API_MESSAGES, HTTP_STATUS } from './api.constants';
 import type { ApiError } from './api.types';
-import { showToast } from '@/shared/components/Toasts/Toast';
+import { showToast } from '@/shared/utils/toast.utils';
 import { getErrorMessageByStatusCode } from './api.messages';
 
 type ErrorPayload = ApiError<unknown>;

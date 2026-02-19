@@ -1,0 +1,63 @@
+# ─────────────────────────────────────────────────────
+# Composite Action: 공통 setup
+#
+# quality, test, build 등 여러 job에서 반복되는
+# checkout → setup-node → corepack → cache restore를
+# 한 곳에 정의하여 중복 제거
+#
+# 사용법:
+#   steps:
+#     - uses: ./.github/actions/setup
+#
+# 이 action이 없으면 각 job마다 아래 4단계를 매번 작성해야 함
+# → 수정 시 모든 job을 일일이 고쳐야 하는 문제 발생
+# → composite action으로 한 곳만 수정하면 전체 반영됨
+# ─────────────────────────────────────────────────────
+name: Setup Node & Restore Cache
+description: Checkout, setup Node, enable Corepack, restore node_modules
+# inputs: 이 action을 호출할 때 넘길 수 있는 파라미터
+# 기본값이 있으므로 별도 지정 없이 사용 가능
+# 예: - uses: ./.github/actions/setup
+#       with:
+#         node-version: "22"   ← 필요할 때만 오버라이드
+inputs:
+  node-version:
+    description: Node.js version
+    required: false
+    default: '20' # Dockerfile의 node:20-alpine과 일치시킴
+# using: composite → 여러 step을 하나의 action으로 묶음
+# 일반 action(JavaScript/Docker)과 달리 별도 빌드 없이 YAML만으로 구성
+runs:
+  using: composite
+  steps:
+    # 1) 레포지토리 코드를 러너에 체크아웃
+    #    각 job은 빈 가상머신에서 시작하므로 코드가 없음
+    - uses: actions/checkout@v4
+    # 2) 지정된 버전의 Node.js 설치
+    #    ${{ inputs.node-version }}으로 호출 측에서 버전 지정 가능
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+    # 3) Corepack 활성화
+    #    Yarn Modern(Berry)을 사용하기 위해 필요
+    #    package.json의 packageManager 필드를 읽어 올바른 Yarn 버전을 자동 설치
+    #    composite action에서는 shell을 명시적으로 지정해야 함
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+    # 4) install job에서 저장한 node_modules 캐시를 복원
+    #
+    #    key: yarn.lock 해시 기반의 정확한 키로 먼저 매칭 시도
+    #      → 히트하면 install job과 완전히 동일한 node_modules 복원
+    #
+    #    restore-keys: key가 매칭 안 될 때 (yarn.lock이 변경된 경우)
+    #      prefix만으로 가장 최근 캐시를 복원
+    #      → 100% 일치하진 않지만 대부분의 패키지는 동일하므로
+    #        처음부터 install하는 것보다 훨씬 빠름
+    - name: Restore node_modules
+      uses: actions/cache/restore@v4
+      with:
+        path: node_modules
+        key: nm-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+        restore-keys: |
+          nm-${{ runner.os }}-

@@ -34,7 +34,7 @@ import { API_ENDPOINTS } from './api.endpoints';
 const LOGIN_ENDPOINT = API_ENDPOINTS.AUTH.LOGIN;
 import type { ApiResponse } from './api.types';
 import { ROUTES } from '../routes/routes';
-import { showToast } from '@/shared/components/Toasts/Toast';
+import { showToast } from '@/shared/utils/toast.utils';
 import { handleError } from './api.utils';
 import { getErrorMessageByStatusCode } from './api.messages';
 import { getMimeTypeFromFilename, base64ToBlob, sanitizeFilename } from '@/shared/utils/file';
@@ -246,9 +246,9 @@ const tokenManager = new TokenManager();
 apiClient.interceptors.request.use(
   (config: ExtendedAxiosRequestConfig) => {
     if (import.meta.env.DEV) {
-      console.log('API Request:', config.method?.toUpperCase(), config.url);
-      if (config.params) console.log('Params:', config.params);
-      if (config.data) console.log('Data:', config.data);
+      console.warn('API Request:', config.method?.toUpperCase(), config.url);
+      if (config.params) console.warn('Params:', config.params);
+      if (config.data) console.warn('Data:', config.data);
     }
 
     // Basic Auth 처리
@@ -292,7 +292,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     if (import.meta.env.DEV) {
-      console.log('API Response:', response.config.url, response.status);
+      console.warn('API Response:', response.config.url, response.status);
     }
 
     // CSRF 토큰이 응답 헤더에 있으면 저장 (서버가 지원하는 경우)
@@ -711,7 +711,7 @@ export const downloadFileAsBlob = async <TData = unknown>(
     const blob = base64ToBlob(base64String, mimeType);
 
     if (import.meta.env.DEV) {
-      console.log('Blob created:', { type: blob.type, size: blob.size, filename: safeFilename });
+      console.warn('Blob created:', { type: blob.type, size: blob.size, filename: safeFilename });
     }
 
     return { ...response, data: blob } as AxiosResponse<Blob>;

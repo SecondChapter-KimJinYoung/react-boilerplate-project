@@ -34,7 +34,7 @@ export const useExampleList = () => {
   const query = useExampleListQuery({ page, size: PAGE_SIZE, keyword, sort, orderBy });
   const deleteManyMutation = useDeleteManyExamples();
 
-  const list = query.data?.list || [];
+  const list = useMemo(() => query.data?.list ?? [], [query.data?.list]);
   const total = query.data?.totalCount || 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const isLoading = query.isLoading;
