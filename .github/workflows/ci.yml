@@ -366,7 +366,6 @@ jobs:
     timeout-minutes: 10
     environment:
       name: production
-      url: ${{ secrets.DEPLOY_URL }}
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
