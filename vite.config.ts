@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -6,6 +7,24 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Vitest 테스트 설정
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    include: ['src/**/*.test.{ts,tsx}'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/**/*.d.ts',
+        'src/main.tsx',
+        'src/vite-env.d.ts',
+      ],
+    },
+  },
+
   // Vite 플러그인 설정
   plugins: [
     // React 플러그인: Fast Refresh, JSX 변환 등
