@@ -351,7 +351,11 @@ jobs:
   # ─────────────────────────────────────────────────────
   # 4단계: 프로덕션 배포
   #
-  # 실행 조건: main 브랜치에 push일 때만 (PR에서는 실행 안 됨)
+  # 실행 조건:
+  #   - main 브랜치에 push일 때만 (PR에서는 실행 안 됨)
+  #   - SERVER_HOST secret이 등록되어 있을 때만
+  #     → 배포 서버가 준비되면 Secrets만 추가하면 자동 활성화
+  #
   # timeout-minutes: 10 → 10분 초과 시 자동 실패 처리
   #
   # 배포 흐름:
@@ -369,8 +373,10 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
     timeout-minutes: 10
+    permissions:
+      statuses: write # Notify on failure step에서 커밋 상태 업데이트에 필요
     environment:
       name: production
     steps:
