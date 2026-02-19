@@ -99,7 +99,9 @@ jobs:
           - { name: Lint, command: lint }
           - { name: Format, command: 'format:check' }
     steps:
-      # composite action: checkout → node 설치 → corepack → 캐시 복원
+      # checkout을 먼저 해야 로컬 composite action 파일을 참조할 수 있음
+      - uses: actions/checkout@v4
+      # composite action: corepack → setup-node → 캐시 복원
       # 이 한 줄로 install job이 저장한 node_modules를 복원함
       - uses: ./.github/actions/setup
 
@@ -127,6 +129,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: install
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
 
       # --coverage: 테스트 실행 후 coverage/ 디렉토리에 커버리지 리포트 생성
@@ -161,6 +164,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [quality, test]
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
 
       # VITE_API_URL: GitHub Secrets에 저장된 API 서버 주소
