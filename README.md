@@ -15,6 +15,7 @@
 | 클라이언트 상태 | Zustand | 5 |
 | HTTP | Axios | 1.13 |
 | 패키지 매니저 | Yarn Berry | 4.12 |
+| 테스트 | Vitest | 4 |
 | 코드 품질 | ESLint 9 (Flat Config) + Prettier |
 | CI/CD | GitHub Actions |
 
@@ -163,6 +164,9 @@ yarn dev
 | `yarn lint:fix` | ESLint 자동 수정 |
 | `yarn format` | Prettier 포맷팅 |
 | `yarn format:check` | Prettier 포맷팅 체크 |
+| `yarn test` | 테스트 1회 실행 |
+| `yarn test:watch` | 테스트 watch 모드 (파일 저장 시 자동 재실행) |
+| `yarn test:coverage` | 테스트 + 커버리지 리포트 생성 |
 | `yarn quality` | 타입 체크 + 린트 + 포맷 체크 (한번에) |
 | `yarn quality:fix` | 린트 수정 + 포맷 수정 (한번에) |
 
@@ -189,6 +193,49 @@ src/routes/routes.ts    # 경로 상수 추가
 # 4. 2곳 이상에서 쓰는 컴포넌트가 생기면
 src/shared/components/  # atoms → molecules → organisms 분류
 ```
+
+## 테스트
+
+**Vitest** + **jsdom** 기반 테스트 환경입니다.
+
+### 실행 방법
+
+```bash
+# 전체 테스트 1회 실행
+yarn test
+
+# watch 모드 (파일 저장 시 자동 재실행, 개발 중 추천)
+yarn test:watch
+
+# 커버리지 리포트 포함 실행
+yarn test:coverage
+```
+
+### watch 모드 단축키
+
+| 키 | 동작 |
+|----|------|
+| `a` | 전체 테스트 실행 |
+| `f` | 실패한 테스트만 재실행 |
+| `p` | 파일명으로 필터 |
+| `t` | 테스트 이름으로 필터 |
+| `q` | 종료 |
+
+### 테스트 파일 규칙
+
+- 테스트 파일은 대상 파일과 **같은 폴더**에 `[파일명].test.ts` 로 배치
+- 예시: `format.ts` → `format.test.ts`
+- 설정: `vite.config.ts`의 `test` 블록에서 관리
+
+### 커버리지 확인
+
+`yarn test:coverage` 실행 후 `coverage/index.html`을 브라우저로 열면 파일별·라인별 커버리지를 시각적으로 확인할 수 있습니다.
+
+### 테스트 작성 우선순위
+
+1. **핵심 비즈니스 로직** — 계산, 유효성 검증 등 순수 함수
+2. **주요 유저 플로우** — 로그인, 핵심 CRUD
+3. **나머지** — 여유 될 때 점진적으로 확장
 
 ## 커밋 컨벤션
 
