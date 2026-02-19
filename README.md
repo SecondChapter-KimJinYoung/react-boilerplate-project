@@ -75,10 +75,10 @@ src/
 │       └── example.types.ts      #     요청/응답 타입
 │
 ├── features/                     # 기능 모듈 (FBA)
-│   ├── auth/                     #   인증 기능
+│   ├── auth/                     #   인증 기능 (현재 pages만 사용)
 │   │   └── pages/               #     LoginPage, NotFoundPage
 │   │
-│   └── example/                  #   Example CRUD (참고용 샘플)
+│   └── example/                  #   ★ 참고용 샘플 — 기능 폴더의 풀 구조 예시
 │       ├── pages/                #     라우터가 렌더링하는 페이지 진입점
 │       ├── hooks/                #     React Query 훅, 폼 훅
 │       ├── constants/            #     기능 전용 상수
@@ -95,7 +95,7 @@ src/
 │   │   └── ErrorBoundary.tsx
 │   ├── stores/                   #   Zustand 스토어 (auth.store.ts)
 │   ├── constants/                #   query-keys, regex.patterns
-│   └── utils/                    #   cn, lazy, format, file, toast, regex
+│   └── utils/                    #   cn, lazy, file, toast, regex
 │
 ├── routes/                       # 라우팅
 │   ├── router.tsx                #   라우트 트리 (lazy import)
@@ -179,6 +179,7 @@ src/features/user/
 ├── components/     # 이 기능 내부에서만 쓰는 UI 조각
 ├── hooks/          # React Query 훅
 ├── constants/      # 기능 전용 상수
+├── mocks/          # Mock 데이터
 └── utils/          # 기능 전용 유틸
 
 # 2. API 모듈 생성
@@ -193,6 +194,10 @@ src/routes/routes.ts    # 경로 상수 추가
 # 4. 2곳 이상에서 쓰는 컴포넌트가 생기면
 src/shared/components/  # atoms → molecules → organisms 분류
 ```
+
+> **참고**: 모든 하위 폴더를 처음부터 만들 필요 없습니다.
+> 필요한 폴더만 생성하세요. (예: `auth/`는 현재 `pages/`만 사용)
+> 전체 구조 예시는 `features/example/`을 참고하세요.
 
 ## 테스트
 
@@ -256,11 +261,18 @@ yarn test:coverage
 ### 형식
 
 ```
-<prefix>: 주요 메시지 (50자 이내)
+prefix: 주요 메시지 (50자 이내)
 
 * 상세 변경 내용 1
 * 상세 변경 내용 2
 * 상세 변경 내용 3
+```
+
+영향 범위가 명확할 때 `prefix(scope):` 형태로 scope를 추가할 수 있습니다.
+
+```
+fix(ci): Corepack을 setup-node보다 먼저 활성화
+feat(auth): 이메일 저장 체크박스 추가
 ```
 
 ### 규칙
