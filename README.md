@@ -215,6 +215,20 @@ deploy job은 아래 조건을 **모두** 충족해야 실행됩니다:
 
 배포를 활성화하려면 GitHub Settings > Variables에서 `DEPLOY_ENABLED=true` 설정 후, Secrets에 `SERVER_HOST`, `SERVER_USER`, `SSH_PRIVATE_KEY`를 등록하세요.
 
+### 의도적으로 포함하지 않은 것
+
+이 프로젝트는 보일러플레이트 성격이므로, 비용 대비 효과(ROI)가 낮은 도구는 의도적으로 제외했습니다.
+
+| 제외 항목 | 이유 |
+|-----------|------|
+| E2E 테스트 (Playwright/Cypress) | 확정된 유저 플로우가 없는 보일러플레이트 단계. 설치만 100MB+, CI 시간 3~5분 추가 |
+| 시각적 회귀 테스트 (VRT) | 디자인 시스템 미확정 단계, Chromatic/Percy 등 유료 서비스 의존 |
+| Matrix OS 테스트 | 브라우저 SPA — 서버 OS에 의존하지 않음 |
+| 컴포넌트 전수 테스트 | props 전달만 하는 래퍼 수준 컴포넌트의 렌더링 테스트는 ROI가 낮음 |
+| Dependabot/Renovate | 보일러플레이트 특성상 의존성 변경이 잦아 노이즈가 큼. 실서비스 전환 시 추가 권장 |
+
+실서비스로 전환할 때 유저 플로우가 확정되고, 디자인 시스템이 안정화되면 위 항목을 순차적으로 도입합니다.
+
 ## 새 기능 추가 가이드
 
 ```bash
@@ -274,18 +288,42 @@ yarn test:coverage
 ### 테스트 파일 규칙
 
 - 테스트 파일은 대상 파일과 **같은 폴더**에 `[파일명].test.ts` 로 배치
-- 예시: `format.ts` → `format.test.ts`
+- 예시: `regex.utils.ts` -> `regex.utils.test.ts`
 - 설정: `vite.config.ts`의 `test` 블록에서 관리
 
 ### 커버리지 확인
 
-`yarn test:coverage` 실행 후 `coverage/index.html`을 브라우저로 열면 파일별·라인별 커버리지를 시각적으로 확인할 수 있습니다.
+`yarn test:coverage` 실행 후 `coverage/index.html`을 브라우저로 열면 파일별/라인별 커버리지를 시각적으로 확인할 수 있습니다.
 
-### 테스트 작성 우선순위
+### 테스트 전략
 
-1. **핵심 비즈니스 로직** — 계산, 유효성 검증 등 순수 함수
-2. **주요 유저 플로우** — 로그인, 핵심 CRUD
-3. **나머지** — 여유 될 때 점진적으로 확장
+테스트는 비용 대비 효과가 높은 순서로 점진적으로 확장합니다. 보일러플레이트 단계에서 전수 테스트는 유지보수 비용만 높이고 실질적인 안전망이 되지 않기 때문에, **버그가 나면 파급이 큰 코드**부터 작성합니다.
+
+#### 대상 분류
+
+| 우선순위 | 분류 | 대상 파일 | 테스트 가치 |
+|----------|------|-----------|-------------|
+| 1순위 | 순수 유틸 함수 | `regex.utils.ts`, `file.ts`, `status.utils.ts` | 입출력 명확, 외부 의존 없음, 버그 시 여러 곳에 파급 |
+| 2순위 | 상태/데이터 매핑 | `api.messages.ts`, `api.utils.ts` | 분기 로직이 있고, 잘못되면 사용자에게 엉뚱한 메시지 노출 |
+| 3순위 | Zustand 스토어 | `auth.store.ts` | localStorage 연동 로직에 엣지 케이스 존재 (JSON 파싱 실패 등) |
+| 작성 안 함 | 단순 래퍼 컴포넌트 | `Button.tsx`, `Input.tsx` 등 | props 전달만 하는 컴포넌트는 테스트 ROI가 낮음 |
+| 작성 안 함 | 타입/상수 파일 | `api.types.ts`, `api.constants.ts` 등 | 런타임 로직 없음, 타입 체크가 대신함 |
+
+#### 현재 진행 상황
+
+- 1순위: `regex.utils.test.ts` 완료 (validate, format, mask, extract, sanitize, getErrorMessage)
+- 나머지: 실제 기능 개발과 함께 점진적으로 추가
+
+#### 테스트를 작성하지 않는 것에 대해
+
+이 프로젝트에서 컴포넌트 렌더링 테스트를 전수로 작성하지 않는 이유:
+
+- atoms/molecules 컴포넌트는 대부분 HTML 요소에 className과 props를 전달하는 수준
+- 이런 코드의 "렌더링 되는지" 테스트는 React 자체를 테스트하는 것과 다를 바 없음
+- TypeScript strict 모드 + ESLint가 props 타입 오류를 컴파일 타임에 잡아줌
+- 테스트 유지보수 비용이 실제 버그 방지 효과를 초과함
+
+컴포넌트에 **조건 분기, 상태 변화, 사이드 이펙트**가 추가될 때 테스트를 작성합니다.
 
 ## 커밋 컨벤션
 
