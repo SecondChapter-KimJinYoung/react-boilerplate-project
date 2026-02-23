@@ -19,14 +19,39 @@
 | 코드 품질       | ESLint 9 (Flat Config) + Prettier |
 | CI/CD           | GitHub Actions                    |
 
-## 패키지 매니저
+## 시작하기
 
-**Yarn Berry 4.x** + **Corepack**을 사용합니다.
+```bash
+# 1. Corepack 활성화 (최초 1회)
+corepack enable
 
-- `package.json`의 `packageManager` 필드가 버전을 고정합니다
-- `corepack enable` 한 번이면 누가 클론해도 동일한 yarn 버전이 자동 설치됩니다
-- `nodeLinker: node-modules` 모드로 기존 node_modules 방식을 유지합니다
-- CI에서 `yarn install --immutable`로 lockfile 무결성을 강제합니다
+# 2. 의존성 설치
+yarn install
+
+# 3. 환경변수 설정
+# .env, .env.development, .env.production 확인 후 API URL 수정
+
+# 4. 개발 서버 실행
+yarn dev
+# → http://localhost:3000
+```
+
+## 스크립트
+
+| 명령어               | 설명                                         |
+| -------------------- | -------------------------------------------- |
+| `yarn dev`           | 개발 서버 실행                               |
+| `yarn build`         | 프로덕션 빌드 (타입 체크 포함)               |
+| `yarn type-check`    | TypeScript 타입 체크                         |
+| `yarn lint`          | ESLint 검사                                  |
+| `yarn lint:fix`      | ESLint 자동 수정                             |
+| `yarn format`        | Prettier 포맷팅                              |
+| `yarn format:check`  | Prettier 포맷팅 체크                         |
+| `yarn test`          | 테스트 1회 실행                              |
+| `yarn test:watch`    | 테스트 watch 모드 (파일 저장 시 자동 재실행) |
+| `yarn test:coverage` | 테스트 + 커버리지 리포트 생성                |
+| `yarn quality`       | 타입 체크 + 린트 + 포맷 체크 (한번에)        |
+| `yarn quality:fix`   | 린트 수정 + 포맷 수정 (한번에)               |
 
 ## 아키텍처
 
@@ -79,7 +104,7 @@ src/
 │   ├── auth/                     #   인증 기능 (현재 pages만 사용)
 │   │   └── pages/                #     LoginPage, NotFoundPage
 │   │
-│   └── example/                  #   ★ 참고용 샘플 — 기능 폴더의 풀 구조 예시
+│   └── example/                  #   참고용 샘플 — 기능 폴더의 풀 구조 예시
 │       ├── pages/                #     라우터가 렌더링하는 페이지 진입점
 │       ├── hooks/                #     React Query 훅, 폼 훅
 │       ├── constants/            #     기능 전용 상수
@@ -136,98 +161,6 @@ src/
 | 패턴     | `[도메인].patterns.ts`  | `regex.patterns.ts`                        |
 
 **barrel file (`index.ts`) 사용 안 함** — 직접 경로로 import.
-
-## 시작하기
-
-```bash
-# 1. Corepack 활성화 (최초 1회)
-corepack enable
-
-# 2. 의존성 설치
-yarn install
-
-# 3. 환경변수 설정
-# .env, .env.development, .env.production 확인 후 API URL 수정
-
-# 4. 개발 서버 실행
-yarn dev
-# → http://localhost:3000
-```
-
-## 스크립트
-
-| 명령어               | 설명                                         |
-| -------------------- | -------------------------------------------- |
-| `yarn dev`           | 개발 서버 실행                               |
-| `yarn build`         | 프로덕션 빌드 (타입 체크 포함)               |
-| `yarn type-check`    | TypeScript 타입 체크                         |
-| `yarn lint`          | ESLint 검사                                  |
-| `yarn lint:fix`      | ESLint 자동 수정                             |
-| `yarn format`        | Prettier 포맷팅                              |
-| `yarn format:check`  | Prettier 포맷팅 체크                         |
-| `yarn test`          | 테스트 1회 실행                              |
-| `yarn test:watch`    | 테스트 watch 모드 (파일 저장 시 자동 재실행) |
-| `yarn test:coverage` | 테스트 + 커버리지 리포트 생성                |
-| `yarn quality`       | 타입 체크 + 린트 + 포맷 체크 (한번에)        |
-| `yarn quality:fix`   | 린트 수정 + 포맷 수정 (한번에)               |
-
-## CI/CD
-
-GitHub Actions 기반 파이프라인. `.github/workflows/ci.yml`에서 관리합니다.
-
-### 실행 흐름
-
-```
-install → quality (병렬) → build → deploy (main push만)
-        → test   (병렬) ↗       → bundle-report (항상)
-```
-
-### 트리거 조건
-
-| 이벤트 | 실행 범위 |
-| ------ | --------- |
-| main push | 전체 파이프라인 (배포 포함) |
-| main 대상 PR | 품질 검사 + 빌드만 (배포 안 함) |
-| workflow_dispatch | 수동 실행 |
-
-### 파이프라인 상세
-
-| 단계 | Job | 내용 |
-| ---- | --- | ---- |
-| 1 | **Install** | 의존성 설치 (`--immutable`), 보안 audit (`yarn npm audit --severity high`), 캐시 저장 |
-| 2-A | **Quality** (x3 병렬) | TypeScript 타입 체크, ESLint 검사, Prettier 포맷 체크 |
-| 2-B | **Test** | Vitest 실행 + 커버리지 리포트 생성 |
-| 3 | **Build** | 프로덕션 빌드 + 번들 사이즈 baseline 측정 (main만) |
-| 4-A | **Bundle Report** | PR에 번들 사이즈 변화량 코멘트 |
-| 4-B | **Deploy** | SSH로 서버 배포, 헬스체크, 실패 시 자동 롤백 |
-
-### 보안
-
-- **Security audit**: install 시 `yarn npm audit --severity high` 실행. CVSS 7.0 이상(high/critical) 취약점이 있으면 CI 실패
-- **최소 권한 원칙**: 기본 `contents: read`만 부여, 추가 권한은 필요한 job에서만 개별 선언
-
-### 배포 조건
-
-deploy job은 아래 조건을 **모두** 충족해야 실행됩니다:
-
-1. main 브랜치에 push
-2. Repository 변수 `DEPLOY_ENABLED`가 `true`
-
-배포를 활성화하려면 GitHub Settings > Variables에서 `DEPLOY_ENABLED=true` 설정 후, Secrets에 `SERVER_HOST`, `SERVER_USER`, `SSH_PRIVATE_KEY`를 등록하세요.
-
-### 의도적으로 포함하지 않은 것
-
-이 프로젝트는 보일러플레이트 성격이므로, 비용 대비 효과(ROI)가 낮은 도구는 의도적으로 제외했습니다.
-
-| 제외 항목 | 이유 |
-|-----------|------|
-| E2E 테스트 (Playwright/Cypress) | 확정된 유저 플로우가 없는 보일러플레이트 단계. 설치만 100MB+, CI 시간 3~5분 추가 |
-| 시각적 회귀 테스트 (VRT) | 디자인 시스템 미확정 단계, Chromatic/Percy 등 유료 서비스 의존 |
-| Matrix OS 테스트 | 브라우저 SPA — 서버 OS에 의존하지 않음 |
-| 컴포넌트 전수 테스트 | props 전달만 하는 래퍼 수준 컴포넌트의 렌더링 테스트는 ROI가 낮음 |
-| Dependabot/Renovate | 보일러플레이트 특성상 의존성 변경이 잦아 노이즈가 큼. 실서비스 전환 시 추가 권장 |
-
-실서비스로 전환할 때 유저 플로우가 확정되고, 디자인 시스템이 안정화되면 위 항목을 순차적으로 도입합니다.
 
 ## 새 기능 추가 가이드
 
@@ -287,8 +220,8 @@ yarn test:coverage
 
 ### 테스트 파일 규칙
 
-- 테스트 파일은 대상 파일과 **같은 폴더**에 `[파일명].test.ts` 로 배치
-- 예시: `regex.utils.ts` -> `regex.utils.test.ts`
+- 테스트 파일은 대상 파일과 **같은 폴더**에 `[파일명].test.ts`로 배치
+- 예시: `regex.utils.ts` → `regex.utils.test.ts`
 - 설정: `vite.config.ts`의 `test` 블록에서 관리
 
 ### 커버리지 확인
@@ -299,8 +232,6 @@ yarn test:coverage
 
 테스트는 비용 대비 효과가 높은 순서로 점진적으로 확장합니다. 보일러플레이트 단계에서 전수 테스트는 유지보수 비용만 높이고 실질적인 안전망이 되지 않기 때문에, **버그가 나면 파급이 큰 코드**부터 작성합니다.
 
-#### 대상 분류
-
 | 우선순위 | 분류 | 대상 파일 | 테스트 가치 |
 |----------|------|-----------|-------------|
 | 1순위 | 순수 유틸 함수 | `regex.utils.ts`, `file.ts`, `status.utils.ts` | 입출력 명확, 외부 의존 없음, 버그 시 여러 곳에 파급 |
@@ -309,21 +240,75 @@ yarn test:coverage
 | 작성 안 함 | 단순 래퍼 컴포넌트 | `Button.tsx`, `Input.tsx` 등 | props 전달만 하는 컴포넌트는 테스트 ROI가 낮음 |
 | 작성 안 함 | 타입/상수 파일 | `api.types.ts`, `api.constants.ts` 등 | 런타임 로직 없음, 타입 체크가 대신함 |
 
-#### 현재 진행 상황
+현재 진행: `regex.utils.test.ts` 완료. 나머지는 기능 개발과 함께 점진적으로 추가합니다.
 
-- 1순위: `regex.utils.test.ts` 완료 (validate, format, mask, extract, sanitize, getErrorMessage)
-- 나머지: 실제 기능 개발과 함께 점진적으로 추가
+컴포넌트에 **조건 분기, 상태 변화, 사이드 이펙트**가 추가되는 시점에 해당 컴포넌트의 테스트를 작성합니다.
 
-#### 테스트를 작성하지 않는 것에 대해
+## CI/CD
 
-이 프로젝트에서 컴포넌트 렌더링 테스트를 전수로 작성하지 않는 이유:
+GitHub Actions 기반 파이프라인. `.github/workflows/ci.yml`에서 관리합니다.
 
-- atoms/molecules 컴포넌트는 대부분 HTML 요소에 className과 props를 전달하는 수준
-- 이런 코드의 "렌더링 되는지" 테스트는 React 자체를 테스트하는 것과 다를 바 없음
-- TypeScript strict 모드 + ESLint가 props 타입 오류를 컴파일 타임에 잡아줌
-- 테스트 유지보수 비용이 실제 버그 방지 효과를 초과함
+### 실행 흐름
 
-컴포넌트에 **조건 분기, 상태 변화, 사이드 이펙트**가 추가될 때 테스트를 작성합니다.
+```
+install → quality (병렬) → build → deploy (main push만)
+        → test   (병렬) ↗       → bundle-report (항상)
+```
+
+### 트리거 조건
+
+| 이벤트            | 실행 범위                        |
+| ----------------- | -------------------------------- |
+| main push         | 전체 파이프라인 (배포 포함)      |
+| main 대상 PR      | 품질 검사 + 빌드만 (배포 안 함)  |
+| workflow_dispatch | 수동 실행                        |
+
+### 파이프라인 상세
+
+| 단계 | Job                      | 내용                                                                                     |
+| ---- | ------------------------ | ---------------------------------------------------------------------------------------- |
+| 1    | **Install**              | 의존성 설치 (`--immutable`), 보안 audit (`yarn npm audit --severity high`), 캐시 저장    |
+| 2-A  | **Quality** (x3 병렬)   | TypeScript 타입 체크, ESLint 검사, Prettier 포맷 체크                                    |
+| 2-B  | **Test**                 | Vitest 실행 + 커버리지 리포트 생성                                                       |
+| 3    | **Build**                | 프로덕션 빌드 + 번들 사이즈 baseline 측정 (main만)                                      |
+| 4-A  | **Bundle Report**        | PR에 번들 사이즈 변화량 코멘트                                                           |
+| 4-B  | **Deploy**               | SSH로 서버 배포, 헬스체크, 실패 시 자동 롤백                                             |
+
+### 보안
+
+- **Security audit**: install 시 `yarn npm audit --severity high` 실행. CVSS 7.0 이상(high/critical) 취약점이 있으면 CI 실패
+- **최소 권한 원칙**: 기본 `contents: read`만 부여, 추가 권한은 필요한 job에서만 개별 선언
+
+### 배포 조건
+
+deploy job은 아래 조건을 **모두** 충족해야 실행됩니다:
+
+1. main 브랜치에 push
+2. Repository 변수 `DEPLOY_ENABLED`가 `true`
+
+배포를 활성화하려면 GitHub Settings > Variables에서 `DEPLOY_ENABLED=true` 설정 후, Secrets에 `SERVER_HOST`, `SERVER_USER`, `SSH_PRIVATE_KEY`를 등록하세요.
+
+### 의도적으로 포함하지 않은 것
+
+이 프로젝트는 보일러플레이트 성격이므로, 비용 대비 효과(ROI)가 낮은 도구는 의도적으로 제외했습니다.
+
+| 제외 항목                        | 이유                                                                                     |
+| -------------------------------- | ---------------------------------------------------------------------------------------- |
+| E2E 테스트 (Playwright/Cypress)  | 확정된 유저 플로우가 없는 보일러플레이트 단계. 설치만 100MB+, CI 시간 3~5분 추가         |
+| 시각적 회귀 테스트 (VRT)         | 디자인 시스템 미확정 단계, Chromatic/Percy 등 유료 서비스 의존                            |
+| Matrix OS 테스트                 | 브라우저 SPA — 서버 OS에 의존하지 않음                                                   |
+| Dependabot/Renovate              | 보일러플레이트 특성상 의존성 변경이 잦아 노이즈가 큼. 실서비스 전환 시 추가 권장          |
+
+실서비스로 전환할 때 유저 플로우가 확정되고, 디자인 시스템이 안정화되면 위 항목을 순차적으로 도입합니다.
+
+## 패키지 매니저
+
+**Yarn Berry 4.x** + **Corepack**을 사용합니다.
+
+- `package.json`의 `packageManager` 필드가 버전을 고정합니다
+- `corepack enable` 한 번이면 누가 클론해도 동일한 yarn 버전이 자동 설치됩니다
+- `nodeLinker: node-modules` 모드로 기존 node_modules 방식을 유지합니다
+- CI에서 `yarn install --immutable`로 lockfile 무결성을 강제합니다
 
 ## 커밋 컨벤션
 
