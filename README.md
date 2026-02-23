@@ -4,20 +4,20 @@
 
 ## 기술 스택
 
-| 영역 | 기술 | 버전 |
-|------|------|------|
-| UI | React | 19 |
-| 언어 | TypeScript (strict) | 5.9 |
-| 빌드 | Vite (rolldown-vite) | 7.2 |
-| 스타일 | Tailwind CSS | 4 |
-| 라우팅 | React Router | 7 |
-| 서버 상태 | TanStack React Query | 5 |
-| 클라이언트 상태 | Zustand | 5 |
-| HTTP | Axios | 1.13 |
-| 패키지 매니저 | Yarn Berry | 4.12 |
-| 테스트 | Vitest | 4 |
-| 코드 품질 | ESLint 9 (Flat Config) + Prettier |
-| CI/CD | GitHub Actions |
+| 영역            | 기술                              | 버전 |
+| --------------- | --------------------------------- | ---- |
+| UI              | React                             | 19   |
+| 언어            | TypeScript (strict)               | 5.9  |
+| 빌드            | Vite (rolldown-vite)              | 7.2  |
+| 스타일          | Tailwind CSS                      | 4    |
+| 라우팅          | React Router                      | 7    |
+| 서버 상태       | TanStack React Query              | 5    |
+| 클라이언트 상태 | Zustand                           | 5    |
+| HTTP            | Axios                             | 1.13 |
+| 패키지 매니저   | Yarn Berry                        | 4.12 |
+| 테스트          | Vitest                            | 4    |
+| 코드 품질       | ESLint 9 (Flat Config) + Prettier |
+| CI/CD           | GitHub Actions                    |
 
 ## 패키지 매니저
 
@@ -37,17 +37,18 @@
 ```
 
 **핵심 원칙**:
+
 - 1곳에서만 쓰는 컴포넌트 → `features/` 내부에 배치
 - 2곳 이상에서 쓰는 컴포넌트 → `shared/`로 승격
 - `features/` 간 직접 import 금지 → 반드시 `shared/`를 경유
 
 ### 상태 관리 전략
 
-| 상태 종류 | 도구 | 예시 |
-|-----------|------|------|
-| 서버 데이터 (조회/캐시) | React Query | API 응답, 목록, 상세 |
-| 전역 클라이언트 상태 | Zustand | 인증 정보, 사용자 설정 |
-| 지역 UI 상태 | useState/useReducer | 폼 입력, 모달 열기/닫기 |
+| 상태 종류               | 도구                | 예시                    |
+| ----------------------- | ------------------- | ----------------------- |
+| 서버 데이터 (조회/캐시) | React Query         | API 응답, 목록, 상세    |
+| 전역 클라이언트 상태    | Zustand             | 인증 정보, 사용자 설정  |
+| 지역 UI 상태            | useState/useReducer | 폼 입력, 모달 열기/닫기 |
 
 ### API 레이어 전략
 
@@ -76,7 +77,7 @@ src/
 │
 ├── features/                     # 기능 모듈 (FBA)
 │   ├── auth/                     #   인증 기능 (현재 pages만 사용)
-│   │   └── pages/               #     LoginPage, NotFoundPage
+│   │   └── pages/                #     LoginPage, NotFoundPage
 │   │
 │   └── example/                  #   ★ 참고용 샘플 — 기능 폴더의 풀 구조 예시
 │       ├── pages/                #     라우터가 렌더링하는 페이지 진입점
@@ -109,30 +110,30 @@ src/
 
 ## 라우트 구조
 
-| 경로 | 가드 | 레이아웃 | 페이지 |
-|------|------|----------|--------|
-| `/` | - | - | → `/auth/login` 리다이렉트 |
-| `/auth/login` | AuthRoute | AuthLayout | LoginPage |
-| `/dashboard` | ProtectedRoute | DashboardLayout | (placeholder) |
-| `/example/*` | ProtectedRoute | DashboardLayout | Example CRUD |
-| `*` | - | - | NotFoundPage (404) |
+| 경로          | 가드           | 레이아웃        | 페이지                     |
+| ------------- | -------------- | --------------- | -------------------------- |
+| `/`           | -              | -               | → `/auth/login` 리다이렉트 |
+| `/auth/login` | AuthRoute      | AuthLayout      | LoginPage                  |
+| `/dashboard`  | ProtectedRoute | DashboardLayout | (placeholder)              |
+| `/example/*`  | ProtectedRoute | DashboardLayout | Example CRUD               |
+| `*`           | -              | -               | NotFoundPage (404)         |
 
 - **ProtectedRoute**: 토큰 없으면 → 로그인으로 리다이렉트
 - **AuthRoute**: 토큰 있으면 → 대시보드로 리다이렉트
 
 ## 파일 네이밍 규칙
 
-| 종류 | 패턴 | 예시 |
-|------|------|------|
-| 페이지 | `XxxPage.tsx` | `LoginPage.tsx`, `ExampleListPage.tsx` |
-| 컴포넌트 | `PascalCase.tsx` | `Button.tsx`, `SearchInput.tsx` |
-| 훅 | `useXxx.ts` | `useExample.ts`, `useExampleForm.ts` |
-| 유틸 | `[도메인].utils.ts` | `toast.utils.ts`, `regex.utils.ts` |
-| 타입 | `[도메인].types.ts` | `api.types.ts`, `example.types.ts` |
-| 상수 | `[도메인].constants.ts` | `api.constants.ts`, `example.constants.ts` |
-| 스토어 | `[도메인].store.ts` | `auth.store.ts` |
-| API 함수 | `[도메인].api.ts` | `example.api.ts` |
-| 패턴 | `[도메인].patterns.ts` | `regex.patterns.ts` |
+| 종류     | 패턴                    | 예시                                       |
+| -------- | ----------------------- | ------------------------------------------ |
+| 페이지   | `XxxPage.tsx`           | `LoginPage.tsx`, `ExampleListPage.tsx`     |
+| 컴포넌트 | `PascalCase.tsx`        | `Button.tsx`, `SearchInput.tsx`            |
+| 훅       | `useXxx.ts`             | `useExample.ts`, `useExampleForm.ts`       |
+| 유틸     | `[도메인].utils.ts`     | `toast.utils.ts`, `regex.utils.ts`         |
+| 타입     | `[도메인].types.ts`     | `api.types.ts`, `example.types.ts`         |
+| 상수     | `[도메인].constants.ts` | `api.constants.ts`, `example.constants.ts` |
+| 스토어   | `[도메인].store.ts`     | `auth.store.ts`                            |
+| API 함수 | `[도메인].api.ts`       | `example.api.ts`                           |
+| 패턴     | `[도메인].patterns.ts`  | `regex.patterns.ts`                        |
 
 **barrel file (`index.ts`) 사용 안 함** — 직접 경로로 import.
 
@@ -155,20 +156,64 @@ yarn dev
 
 ## 스크립트
 
-| 명령어 | 설명 |
-|--------|------|
-| `yarn dev` | 개발 서버 실행 |
-| `yarn build` | 프로덕션 빌드 (타입 체크 포함) |
-| `yarn type-check` | TypeScript 타입 체크 |
-| `yarn lint` | ESLint 검사 |
-| `yarn lint:fix` | ESLint 자동 수정 |
-| `yarn format` | Prettier 포맷팅 |
-| `yarn format:check` | Prettier 포맷팅 체크 |
-| `yarn test` | 테스트 1회 실행 |
-| `yarn test:watch` | 테스트 watch 모드 (파일 저장 시 자동 재실행) |
-| `yarn test:coverage` | 테스트 + 커버리지 리포트 생성 |
-| `yarn quality` | 타입 체크 + 린트 + 포맷 체크 (한번에) |
-| `yarn quality:fix` | 린트 수정 + 포맷 수정 (한번에) |
+| 명령어               | 설명                                         |
+| -------------------- | -------------------------------------------- |
+| `yarn dev`           | 개발 서버 실행                               |
+| `yarn build`         | 프로덕션 빌드 (타입 체크 포함)               |
+| `yarn type-check`    | TypeScript 타입 체크                         |
+| `yarn lint`          | ESLint 검사                                  |
+| `yarn lint:fix`      | ESLint 자동 수정                             |
+| `yarn format`        | Prettier 포맷팅                              |
+| `yarn format:check`  | Prettier 포맷팅 체크                         |
+| `yarn test`          | 테스트 1회 실행                              |
+| `yarn test:watch`    | 테스트 watch 모드 (파일 저장 시 자동 재실행) |
+| `yarn test:coverage` | 테스트 + 커버리지 리포트 생성                |
+| `yarn quality`       | 타입 체크 + 린트 + 포맷 체크 (한번에)        |
+| `yarn quality:fix`   | 린트 수정 + 포맷 수정 (한번에)               |
+
+## CI/CD
+
+GitHub Actions 기반 파이프라인. `.github/workflows/ci.yml`에서 관리합니다.
+
+### 실행 흐름
+
+```
+install → quality (병렬) → build → deploy (main push만)
+        → test   (병렬) ↗       → bundle-report (항상)
+```
+
+### 트리거 조건
+
+| 이벤트 | 실행 범위 |
+| ------ | --------- |
+| main push | 전체 파이프라인 (배포 포함) |
+| main 대상 PR | 품질 검사 + 빌드만 (배포 안 함) |
+| workflow_dispatch | 수동 실행 |
+
+### 파이프라인 상세
+
+| 단계 | Job | 내용 |
+| ---- | --- | ---- |
+| 1 | **Install** | 의존성 설치 (`--immutable`), 보안 audit (`yarn npm audit --severity high`), 캐시 저장 |
+| 2-A | **Quality** (x3 병렬) | TypeScript 타입 체크, ESLint 검사, Prettier 포맷 체크 |
+| 2-B | **Test** | Vitest 실행 + 커버리지 리포트 생성 |
+| 3 | **Build** | 프로덕션 빌드 + 번들 사이즈 baseline 측정 (main만) |
+| 4-A | **Bundle Report** | PR에 번들 사이즈 변화량 코멘트 |
+| 4-B | **Deploy** | SSH로 서버 배포, 헬스체크, 실패 시 자동 롤백 |
+
+### 보안
+
+- **Security audit**: install 시 `yarn npm audit --severity high` 실행. CVSS 7.0 이상(high/critical) 취약점이 있으면 CI 실패
+- **최소 권한 원칙**: 기본 `contents: read`만 부여, 추가 권한은 필요한 job에서만 개별 선언
+
+### 배포 조건
+
+deploy job은 아래 조건을 **모두** 충족해야 실행됩니다:
+
+1. main 브랜치에 push
+2. Repository 변수 `DEPLOY_ENABLED`가 `true`
+
+배포를 활성화하려면 GitHub Settings > Variables에서 `DEPLOY_ENABLED=true` 설정 후, Secrets에 `SERVER_HOST`, `SERVER_USER`, `SSH_PRIVATE_KEY`를 등록하세요.
 
 ## 새 기능 추가 가이드
 
@@ -218,13 +263,13 @@ yarn test:coverage
 
 ### watch 모드 단축키
 
-| 키 | 동작 |
-|----|------|
-| `a` | 전체 테스트 실행 |
+| 키  | 동작                   |
+| --- | ---------------------- |
+| `a` | 전체 테스트 실행       |
 | `f` | 실패한 테스트만 재실행 |
-| `p` | 파일명으로 필터 |
-| `t` | 테스트 이름으로 필터 |
-| `q` | 종료 |
+| `p` | 파일명으로 필터        |
+| `t` | 테스트 이름으로 필터   |
+| `q` | 종료                   |
 
 ### 테스트 파일 규칙
 
@@ -246,17 +291,17 @@ yarn test:coverage
 
 ### prefix
 
-| prefix | 용도 | 예시 |
-|--------|------|------|
-| `feat` | 새 기능 | `feat: 로그인 페이지 구현` |
-| `fix` | 버그 수정 | `fix: 토큰 갱신 시 무한 루프 해결` |
-| `refactor` | 코드 구조 개선 (동작 변경 없음) | `refactor: API 에러 핸들링 분리` |
-| `chore` | 설정, 의존성, 빌드 등 | `chore: ESLint 9 마이그레이션` |
-| `docs` | 문서 | `docs: README 환경변수 설명 추가` |
-| `style` | 포맷팅 (코드 의미 변경 없음) | `style: Prettier 적용` |
-| `test` | 테스트 | `test: useExample 훅 단위 테스트` |
-| `perf` | 성능 개선 | `perf: 목록 렌더링 최적화` |
-| `ci` | CI/CD 설정 | `ci: test job 타임아웃 변경` |
+| prefix     | 용도                            | 예시                               |
+| ---------- | ------------------------------- | ---------------------------------- |
+| `feat`     | 새 기능                         | `feat: 로그인 페이지 구현`         |
+| `fix`      | 버그 수정                       | `fix: 토큰 갱신 시 무한 루프 해결` |
+| `refactor` | 코드 구조 개선 (동작 변경 없음) | `refactor: API 에러 핸들링 분리`   |
+| `chore`    | 설정, 의존성, 빌드 등           | `chore: ESLint 9 마이그레이션`     |
+| `docs`     | 문서                            | `docs: README 환경변수 설명 추가`  |
+| `style`    | 포맷팅 (코드 의미 변경 없음)    | `style: Prettier 적용`             |
+| `test`     | 테스트                          | `test: useExample 훅 단위 테스트`  |
+| `perf`     | 성능 개선                       | `perf: 목록 렌더링 최적화`         |
+| `ci`       | CI/CD 설정                      | `ci: test job 타임아웃 변경`       |
 
 ### 형식
 
