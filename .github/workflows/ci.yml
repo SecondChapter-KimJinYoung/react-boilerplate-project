@@ -29,6 +29,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# 최소 권한 원칙 (Least Privilege)
+# 기본은 코드 읽기만 허용하고, 추가 권한이 필요한 job에서만 개별 선언
+# → bundle-report: pull-requests: write (PR 코멘트 작성)
+# → deploy: statuses: write (커밋 상태 ✅❌ 표시)
+permissions:
+  contents: read
+
 jobs:
   # ─────────────────────────────────────────────────────
   # 1단계: 의존성 설치 + 캐시 생성
@@ -64,6 +71,14 @@ jobs:
       # CI에서 lock 파일 무결성을 강제하여 "내 로컬에선 됐는데" 방지
       - name: Install
         run: yarn install --immutable
+
+      # 설치된 패키지에 알려진 보안 취약점(CVE)이 있는지 검사
+      # --severity high: CVSS 7.0 이상(high/critical)만 검출
+      # → moderate/low까지 잡으면 false positive가 많아 개발 방해
+      # 데이터 출처: GitHub Advisory Database (NVD/MITRE 기반)
+      # 여기서 실패하면 이후 quality/test/build가 전부 스킵됨
+      - name: Security audit
+        run: yarn npm audit --severity high
 
       # 캐시 키: yarn.lock의 해시값 기반
       # yarn.lock이 동일하면 → 캐시 히트 → 다음 job에서 install 생략
@@ -351,10 +366,11 @@ jobs:
   # ─────────────────────────────────────────────────────
   # 4단계: 프로덕션 배포
   #
-  # 실행 조건:
+  # 실행 조건 (모두 충족해야 실행):
   #   - main 브랜치에 push일 때만 (PR에서는 실행 안 됨)
+  #   - DEPLOY_ENABLED 변수가 'true'일 때만
   #   - SERVER_HOST secret이 등록되어 있을 때만
-  #     → 배포 서버가 준비되면 Secrets만 추가하면 자동 활성화
+  #     → 배포 서버가 준비되면 변수 + Secrets 추가하면 자동 활성화
   #
   # timeout-minutes: 10 → 10분 초과 시 자동 실패 처리
   #
@@ -373,7 +389,11 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      vars.DEPLOY_ENABLED == 'true' &&
+      secrets.SERVER_HOST != ''
     timeout-minutes: 10
     permissions:
       statuses: write # Notify on failure step에서 커밋 상태 업데이트에 필요
