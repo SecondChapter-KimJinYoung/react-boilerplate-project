@@ -75,8 +75,8 @@ const router = createBrowserRouter([
                   path: 'example',
                   children: [
                     { index: true, element: <ExampleListPage /> },
-                    { path: ':id', element: <ExampleDetailPage /> },
                     { path: 'create', element: <ExampleCreatePage /> },
+                    { path: ':id', element: <ExampleDetailPage /> },
                     { path: ':id/edit', element: <ExampleEditPage /> },
                   ],
                 },
