@@ -96,7 +96,9 @@ export const useExampleDetail = (id?: number) =>
 
 /**
  * Example 생성 (목업)
- * @returns { mutate, isPending, error, ... }
+ *
+ * 무효화: lists() — 새 항목이 추가되므로 목록(totalCount, 페이지네이션)만 갱신.
+ * 상세 캐시는 아직 존재하지 않으므로 무효화 불필요.
  */
 export const useCreateExample = () => {
   const queryClient = useQueryClient();
@@ -104,7 +106,7 @@ export const useCreateExample = () => {
   return useMutation<{ success: boolean }, Error, PostExampleRequest>({
     mutationFn: (data) => mockExampleApi.create(data),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
+      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.lists() });
       showToast({ message: 'Example이 생성되었습니다.', variant: 'success' });
     },
     onError: (error) => {
@@ -115,7 +117,10 @@ export const useCreateExample = () => {
 
 /**
  * Example 수정 (목업)
- * @returns { mutate, isPending, error, ... }
+ *
+ * 무효화: lists() + detail(id) — 변경된 항목이 목록에도 상세에도 반영되어야 함.
+ * lists()는 목록 전체를, detail(id)는 해당 항목의 상세만 정밀 무효화.
+ * (all 대신 lists()를 써서 다른 항목의 상세 캐시는 유지)
  */
 export const useUpdateExample = () => {
   const queryClient = useQueryClient();
@@ -123,7 +128,7 @@ export const useUpdateExample = () => {
   return useMutation<{ success: boolean }, Error, { id: number; data: PatchExampleRequest }>({
     mutationFn: ({ id, data }) => mockExampleApi.update(id, data),
     onSuccess: (_, variables) => {
-      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
+      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.lists() });
       void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.detail(variables.id) });
       showToast({ message: 'Example이 수정되었습니다.', variant: 'success' });
     },
@@ -135,15 +140,18 @@ export const useUpdateExample = () => {
 
 /**
  * Example 삭제 (목업)
- * @returns { mutate, isPending, error, ... }
+ *
+ * 무효화: lists() — 삭제된 항목이 목록에서 빠져야 함 (totalCount, 페이지네이션 변경).
+ * 삭제된 항목의 상세 캐시는 removeQueries로 즉시 제거 (refetch해도 404).
  */
 export const useDeleteExample = () => {
   const queryClient = useQueryClient();
 
   return useMutation<{ success: boolean }, Error, number>({
     mutationFn: (id) => mockExampleApi.delete(id),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
+    onSuccess: (_, deletedId) => {
+      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.lists() });
+      queryClient.removeQueries({ queryKey: EXAMPLE_QUERY_KEYS.detail(deletedId) });
       showToast({ message: 'Example이 삭제되었습니다.', variant: 'success' });
     },
     onError: (error) => {
@@ -154,15 +162,20 @@ export const useDeleteExample = () => {
 
 /**
  * Example 다중 삭제 (목업)
- * @returns { mutate, isPending, error, ... }
+ *
+ * 무효화: all — 여러 항목이 한꺼번에 삭제되어 영향 범위가 넓음.
+ * 개별 detail removeQueries 대신 all로 전체 정리하는 것이 단순하고 안전.
  */
 export const useDeleteManyExamples = () => {
   const queryClient = useQueryClient();
 
   return useMutation<{ success: boolean }, Error, number[]>({
     mutationFn: (ids) => mockExampleApi.deleteMany(ids),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.all });
+    onSuccess: (_, deletedIds) => {
+      void queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEYS.lists() });
+      deletedIds.forEach((id) => {
+        queryClient.removeQueries({ queryKey: EXAMPLE_QUERY_KEYS.detail(id) });
+      });
       showToast({ message: 'Example들이 삭제되었습니다.', variant: 'success' });
     },
     onError: (error) => {
