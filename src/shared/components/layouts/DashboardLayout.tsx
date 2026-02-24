@@ -9,6 +9,7 @@
 
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/routes/routes';
+import { SIDEBAR_NAV_ITEMS } from '@/shared/constants/navigation';
 import { useAuthStore } from '@/shared/stores/auth.store';
 import { cn } from '@/shared/utils/cn';
 
@@ -30,12 +31,13 @@ const DashboardLayout = () => {
           {import.meta.env.VITE_APP_NAME || '프로젝트'}
         </div>
 
-        {/* 네비게이션 — 프로젝트에 맞게 수정하세요 */}
+        {/* 네비게이션 — navigation.ts에서 메뉴 항목을 관리합니다 */}
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-          <SidebarLink to={ROUTES.DASHBOARD}>대시보드</SidebarLink>
-
-          {/* 개발 모드 전용 Example 링크 */}
-          {import.meta.env.DEV && <SidebarLink to={ROUTES.EXAMPLE.LIST}>Example</SidebarLink>}
+          {SIDEBAR_NAV_ITEMS.filter((item) => !item.devOnly || import.meta.env.DEV).map((item) => (
+            <SidebarLink key={item.to} to={item.to}>
+              {item.label}
+            </SidebarLink>
+          ))}
         </nav>
       </aside>
 
