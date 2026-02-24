@@ -6,13 +6,13 @@
  */
 
 import { Navigate, Outlet } from 'react-router-dom';
-import { STORAGE_KEYS } from '@/api/api.constants';
+import { useAuthStore } from '@/shared/stores/auth.store';
 import { ROUTES } from '@/routes/routes';
 
 const AuthRoute = () => {
-  const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  if (token) {
+  if (isAuthenticated) {
     return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
 
