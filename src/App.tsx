@@ -12,6 +12,8 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1, // 실패 시 1회 재시도
       refetchOnWindowFocus: false, // 탭 전환 시 자동 refetch 비활성화
+      staleTime: 1000 * 60 * 5, // 5분 — 데이터가 fresh로 유지되는 시간
+      gcTime: 1000 * 60 * 10, // 10분 — 비활성 캐시 유지 시간 (구 cacheTime)
     },
   },
 });
