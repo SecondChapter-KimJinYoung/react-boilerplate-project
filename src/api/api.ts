@@ -35,6 +35,7 @@ const LOGIN_ENDPOINT = API_ENDPOINTS.AUTH.LOGIN;
 import type { ApiResponse } from './api.types';
 import { ROUTES } from '../routes/routes';
 import { showToast } from '@/shared/utils/toast.utils';
+import { clearAuthStorage } from '@/shared/stores/auth.store';
 import { handleError } from './api.utils';
 import { getErrorMessageByStatusCode } from './api.messages';
 import { getMimeTypeFromFilename, base64ToBlob, sanitizeFilename } from '@/shared/utils/file';
@@ -61,11 +62,13 @@ interface TokenRefreshResponse {
 interface RetryableRequest extends InternalAxiosRequestConfig {
   _retry?: boolean;
   skipAuth?: boolean;
+  skipErrorToast?: boolean;
 }
 
 /** 확장된 Axios 요청 설정 */
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   skipAuth?: boolean;
+  skipErrorToast?: boolean;
   basicAuth?: {
     username: string;
     password: string;
@@ -76,6 +79,8 @@ interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
 export interface ApiRequestOptions {
   /** 인증 토큰을 헤더에 추가하지 않음 */
   skipAuth?: boolean;
+  /** 에러 발생 시 글로벌 토스트를 표시하지 않음 (폼에서 직접 처리할 때 사용) */
+  skipErrorToast?: boolean;
   /** Basic Auth 인증 정보 */
   basicAuth?: {
     username: string;
@@ -131,20 +136,7 @@ class TokenManager {
    * 아이디 저장 기능을 위해 REMEMBERED_EMAIL은 보존합니다.
    */
   redirectToLogin(): void {
-    // 아이디 저장 기능을 위해 REMEMBERED_EMAIL은 보존
-    const rememberedEmail = localStorage.getItem(STORAGE_KEYS.REMEMBERED_EMAIL);
-
-    // 인증 관련 데이터만 삭제
-    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.USER_INFO);
-    localStorage.removeItem(STORAGE_KEYS.CSRF_TOKEN); // CSRF 토큰도 삭제
-
-    // REMEMBERED_EMAIL 복원
-    if (rememberedEmail) {
-      localStorage.setItem(STORAGE_KEYS.REMEMBERED_EMAIL, rememberedEmail);
-    }
-
+    clearAuthStorage();
     // TODO: 라우터 시스템 구축 후 router.push(ROUTES.AUTH.LOGIN)로 변경
     window.location.href = ROUTES.AUTH.LOGIN;
   }
@@ -337,16 +329,16 @@ apiClient.interceptors.response.use(
       return tokenManager.handleTokenRefresh(originalRequest);
     }
 
-    // 로그인 에러는 토스트 표시하지 않음 (폼에서 직접 처리)
+    // 로그인 에러 또는 skipErrorToast 설정 시 글로벌 토스트 표시하지 않음
     const isLoginError = originalRequest?.url?.includes(LOGIN_ENDPOINT);
-
-    if (error.response.status === HTTP_STATUS.FORBIDDEN && !isLoginError) {
-      console.warn(API_MESSAGES.ERROR.FORBIDDEN);
-      showToast({ message: API_MESSAGES.ERROR.FORBIDDEN, variant: 'error' });
-    }
+    const shouldShowToast = !originalRequest?.skipErrorToast && !isLoginError;
 
     const errorData = error.response.data;
-    if (errorData?.message && !isLoginError) {
+
+    if (error.response.status === HTTP_STATUS.FORBIDDEN && shouldShowToast) {
+      console.warn(API_MESSAGES.ERROR.FORBIDDEN);
+      showToast({ message: API_MESSAGES.ERROR.FORBIDDEN, variant: 'error' });
+    } else if (errorData?.message && shouldShowToast) {
       showToast({ message: errorData.message, variant: 'error' });
     }
 
@@ -484,6 +476,7 @@ export const get = async <TResponse, TParams = Record<string, unknown>>(
     const response = await apiClient.get<TResponse>(url, {
       params: params as unknown,
       skipAuth: options?.skipAuth,
+      skipErrorToast: options?.skipErrorToast,
     } as ExtendedAxiosRequestConfig);
     return response.data;
   } catch (error) {
@@ -517,6 +510,7 @@ export const post = async <TResponse, TData = unknown>(
             }
           : undefined,
         skipAuth: options?.skipAuth,
+        skipErrorToast: options?.skipErrorToast,
         basicAuth: options?.basicAuth,
       } as ExtendedAxiosRequestConfig,
     );
@@ -545,6 +539,7 @@ export const patch = async <TResponse, TData = unknown>(
       data as unknown,
       {
         skipAuth: options?.skipAuth,
+        skipErrorToast: options?.skipErrorToast,
       } as ExtendedAxiosRequestConfig,
     );
     return response.data;
@@ -572,6 +567,7 @@ export const put = async <TResponse, TData = unknown>(
       data as unknown,
       {
         skipAuth: options?.skipAuth,
+        skipErrorToast: options?.skipErrorToast,
       } as ExtendedAxiosRequestConfig,
     );
     return response.data;
@@ -597,6 +593,7 @@ export const del = async <TResponse, TData = unknown>(
     const response = await apiClient.delete<TResponse>(url, {
       data: data as unknown,
       skipAuth: options?.skipAuth,
+      skipErrorToast: options?.skipErrorToast,
     } as ExtendedAxiosRequestConfig);
     return response.data;
   } catch (error) {
