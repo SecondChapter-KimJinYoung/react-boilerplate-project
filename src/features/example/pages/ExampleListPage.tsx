@@ -104,7 +104,7 @@ const ExampleListPage = () => {
                       <td className="w-[40px] border-b border-gray-200 text-center">
                         <div className="flex items-center justify-center py-3">
                           <Checkbox
-                            checked={table.selection.selected.includes(item.id)}
+                            checked={table.selection.selectedSet.has(item.id)}
                             onChange={() => table.selection.toggleSelect(item.id)}
                           />
                         </div>

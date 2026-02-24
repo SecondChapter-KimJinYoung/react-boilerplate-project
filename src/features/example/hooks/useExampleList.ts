@@ -53,6 +53,7 @@ export const useExampleList = () => {
 
   // selected를 항상 필터링된 상태로 유지 (listIds 변경 시 자동으로 필터링됨)
   const selectedToUse = filteredSelected;
+  const selectedSet = useMemo(() => new Set(selectedToUse), [selectedToUse]);
 
   const toggleSelect = (id: number) => {
     setSelected((prev) => {
@@ -154,7 +155,7 @@ export const useExampleList = () => {
   return {
     data: { list, total, page, totalPages },
     status: { isLoading, isFetching, isError },
-    selection: { selected: selectedToUse, toggleSelect, toggleSelectAll },
+    selection: { selected: selectedToUse, selectedSet, toggleSelect, toggleSelectAll },
     filter: {
       searchInput,
       setSearchInput,
