@@ -25,7 +25,7 @@ const NotFoundPage = lazyImport(() => import('@/features/auth/pages/NotFoundPage
 const ExampleListPage = lazyImport(() => import('@/features/example/pages/ExampleListPage'));
 const ExampleDetailPage = lazyImport(() => import('@/features/example/pages/ExampleDetailPage'));
 const ExampleCreatePage = lazyImport(() => import('@/features/example/pages/ExampleCreatePage'));
-const ExampleEditPage = lazyImport(() => import('@/features/example/pages/ExampleUpdatePage'));
+const ExampleEditPage = lazyImport(() => import('@/features/example/pages/ExampleEditPage'));
 
 // --------------- 라우터 설정 ---------------
 const router = createBrowserRouter([
@@ -75,9 +75,9 @@ const router = createBrowserRouter([
                   path: 'example',
                   children: [
                     { index: true, element: <ExampleListPage /> },
-                    { path: 'detail/:id', element: <ExampleDetailPage /> },
+                    { path: ':id', element: <ExampleDetailPage /> },
                     { path: 'create', element: <ExampleCreatePage /> },
-                    { path: 'edit/:id', element: <ExampleEditPage /> },
+                    { path: ':id/edit', element: <ExampleEditPage /> },
                   ],
                 },
               ]

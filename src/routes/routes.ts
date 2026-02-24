@@ -19,9 +19,9 @@ export const ROUTES = {
   // ============ Example (예시) ============
   EXAMPLE: {
     LIST: '/example',
-    DETAIL: (id: number) => `/example/detail/${id}`,
+    DETAIL: (id: number) => `/example/${id}`,
     CREATE: '/example/create',
-    EDIT: (id: number) => `/example/edit/${id}`,
+    EDIT: (id: number) => `/example/${id}/edit`,
   },
 
   // ============ 인증 ============

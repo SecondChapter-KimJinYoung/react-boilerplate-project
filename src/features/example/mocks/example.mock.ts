@@ -102,11 +102,13 @@ export const exampleMockTotalCount = 10;
 
 /**
  * Example 상세 더미 데이터 생성
- * Detail과 Update 페이지에서 사용
+ * Detail과 Edit 페이지에서 사용
  */
-export const getExampleMockDetail = (id: number) => ({
+export const getExampleMockDetail = (id: number): ExampleItem => ({
   id,
   name: `Example ${id}`,
+  userId: `user-${id}`,
+  email: `example${id}@test.com`,
   description: `Example ${id}에 대한 설명입니다.`,
   status: id % 2 === 0 ? 'ACTIVE' : 'INACTIVE',
   createdAt: '2024-01-01 00:00:00',
