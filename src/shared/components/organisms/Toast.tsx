@@ -34,6 +34,53 @@ const variantIcons: Record<ToastVariant, string> = {
   warning: '\u0021',
 };
 
+// ============ ToastItem — 개별 토스트의 타이머를 독립 관리 ============
+
+interface ToastItemProps {
+  toast: InternalToast;
+  onClose: (id: string) => void;
+}
+
+const ToastItem = ({ toast, onClose }: ToastItemProps) => {
+  const variant = toast.variant ?? 'warning';
+
+  // 각 토스트가 자체 타이머를 관리 — 다른 토스트의 상태 변화에 영향받지 않음
+  useEffect(() => {
+    if (!toast.open) return;
+    const timer = setTimeout(() => onClose(toast.id), toast.duration ?? 3200);
+    return () => clearTimeout(timer);
+  }, [toast.id, toast.open, toast.duration, onClose]);
+
+  return (
+    <div
+      className={cn(
+        'pointer-events-auto flex min-w-[280px] max-w-sm items-center gap-3 rounded-lg px-4 py-3 shadow-lg transition-all duration-300',
+        variantStyles[variant],
+        toast.open ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0',
+      )}
+    >
+      {/* 아이콘 */}
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs font-bold">
+        {variantIcons[variant]}
+      </span>
+
+      {/* 메시지 */}
+      <p className="flex-1 text-sm font-medium">{toast.message}</p>
+
+      {/* 닫기 버튼 */}
+      <button
+        type="button"
+        onClick={() => onClose(toast.id)}
+        className="shrink-0 rounded-md p-0.5 opacity-70 transition-opacity hover:opacity-100"
+      >
+        <span className="text-sm">{'\u2715'}</span>
+      </button>
+    </div>
+  );
+};
+
+// ============ Toast 컨테이너 ============
+
 const Toast = () => {
   const [toasts, setToasts] = useState<InternalToast[]>([]);
 
@@ -62,52 +109,11 @@ const Toast = () => {
     }, 300);
   }, []);
 
-  // 자동 닫힘 타이머
-  useEffect(() => {
-    const timers = toasts
-      .filter((t) => t.open)
-      .map((t) =>
-        setTimeout(() => {
-          handleClose(t.id);
-        }, t.duration ?? 3200),
-      );
-
-    return () => timers.forEach(clearTimeout);
-  }, [toasts, handleClose]);
-
   return (
     <div className="pointer-events-none fixed inset-0 z-50 flex flex-col items-end gap-3 p-6">
-      {toasts.map((toast) => {
-        const variant = toast.variant ?? 'warning';
-
-        return (
-          <div
-            key={toast.id}
-            className={cn(
-              'pointer-events-auto flex min-w-[280px] max-w-sm items-center gap-3 rounded-lg px-4 py-3 shadow-lg transition-all duration-300',
-              variantStyles[variant],
-              toast.open ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0',
-            )}
-          >
-            {/* 아이콘 */}
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs font-bold">
-              {variantIcons[variant]}
-            </span>
-
-            {/* 메시지 */}
-            <p className="flex-1 text-sm font-medium">{toast.message}</p>
-
-            {/* 닫기 버튼 */}
-            <button
-              type="button"
-              onClick={() => handleClose(toast.id)}
-              className="shrink-0 rounded-md p-0.5 opacity-70 transition-opacity hover:opacity-100"
-            >
-              <span className="text-sm">{'\u2715'}</span>
-            </button>
-          </div>
-        );
-      })}
+      {toasts.map((toast) => (
+        <ToastItem key={toast.id} toast={toast} onClose={handleClose} />
+      ))}
     </div>
   );
 };
