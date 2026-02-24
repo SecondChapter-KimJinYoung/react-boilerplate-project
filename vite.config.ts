@@ -62,7 +62,7 @@ export default defineConfig({
 
   // 개발 서버 설정
   server: {
-    port: 3000,
+    port: 5173,
     open: true,
     host: true, // 네트워크 접근 가능 (모바일 디바이스 테스트용)
     // HMR 연결 실패 시 자동 재연결
