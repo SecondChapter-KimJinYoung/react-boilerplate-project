@@ -31,6 +31,27 @@ interface AuthState {
   setUser: (user: User) => void;
 }
 
+// ============ 인증 스토리지 정리 ============
+
+/**
+ * 인증 관련 localStorage를 정리합니다.
+ * 아이디 저장(rememberedEmail)은 보존합니다.
+ *
+ * auth.store.ts의 logout과 api.ts의 TokenManager.redirectToLogin에서 공통 사용합니다.
+ */
+export const clearAuthStorage = (): void => {
+  const rememberedEmail = localStorage.getItem(STORAGE_KEYS.REMEMBERED_EMAIL);
+
+  localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+  localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+  localStorage.removeItem(STORAGE_KEYS.USER_INFO);
+  localStorage.removeItem(STORAGE_KEYS.CSRF_TOKEN);
+
+  if (rememberedEmail) {
+    localStorage.setItem(STORAGE_KEYS.REMEMBERED_EMAIL, rememberedEmail);
+  }
+};
+
 // ============ 초기 상태 hydration ============
 
 const getInitialAuth = (): { isAuthenticated: boolean; user: User | null } => {
@@ -66,18 +87,7 @@ export const useAuthStore = create<AuthState>()((set) => {
     },
 
     logout: () => {
-      // rememberedEmail은 보존 (TokenManager.redirectToLogin과 동일 로직)
-      const rememberedEmail = localStorage.getItem(STORAGE_KEYS.REMEMBERED_EMAIL);
-
-      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.USER_INFO);
-      localStorage.removeItem(STORAGE_KEYS.CSRF_TOKEN);
-
-      if (rememberedEmail) {
-        localStorage.setItem(STORAGE_KEYS.REMEMBERED_EMAIL, rememberedEmail);
-      }
-
+      clearAuthStorage();
       set({ isAuthenticated: false, user: null });
     },
 
