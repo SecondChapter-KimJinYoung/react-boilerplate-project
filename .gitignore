@@ -25,11 +25,12 @@ coverage
 # 환경 변수 (.env는 추적 유지)
 .env.*.local
 
-# IDE / 에디터 파일
+# IDE / 에디터 / AI 도구
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
 .idea
+.claude
 .DS_Store
 Thumbs.db
 *.suo
