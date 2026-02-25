@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import type { ExampleItem } from '@/api/example/example.types';
+import useDebounce from '@/shared/hooks/useDebounce';
 
 import { useDeleteManyExamples, useExampleListQuery } from './useExample';
 
@@ -11,7 +12,7 @@ const PAGE_SIZE = 10;
 export const useExampleList = () => {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
-  const [keyword, setKeyword] = useState('');
+  const debouncedSearch = useDebounce(searchInput, 300);
   const [sort, setSort] = useState('createdAt');
   const [orderBy, setOrderBy] = useState<OrderBy>('ASC');
   const [sortInput, setSortInput] = useState('createdAt');
@@ -20,6 +21,8 @@ export const useExampleList = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [isDeleteItemModalOpen, setIsDeleteItemModalOpen] = useState(false);
+
+  const keyword = debouncedSearch.trim();
 
   const query = useExampleListQuery({ page, size: PAGE_SIZE, keyword, sort, orderBy });
   const deleteManyMutation = useDeleteManyExamples();
@@ -108,7 +111,6 @@ export const useExampleList = () => {
 
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setKeyword(searchInput.trim());
     setSort(sortInput);
     setOrderBy(orderByInput);
     setPage(1);
@@ -117,14 +119,12 @@ export const useExampleList = () => {
   const handleSearchClear = () => {
     setSearchInput('');
     if (keyword !== '') {
-      setKeyword('');
       setPage(1);
     }
   };
 
   const handleReset = () => {
     setSearchInput('');
-    setKeyword('');
     setSort('createdAt');
     setOrderBy('ASC');
     setSortInput('createdAt');
