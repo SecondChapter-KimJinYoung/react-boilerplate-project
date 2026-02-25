@@ -2,8 +2,8 @@ FROM node:20-alpine AS builder
 RUN corepack enable && corepack prepare yarn@stable --activate
 WORKDIR /app
 COPY . .
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 RUN yarn install && yarn build
 
 FROM nginx:alpine

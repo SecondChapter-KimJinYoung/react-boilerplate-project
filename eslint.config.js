@@ -9,6 +9,7 @@ import react from 'eslint-plugin-react'
 import tseslint from 'typescript-eslint'
 import prettier from 'eslint-plugin-prettier'
 import prettierConfig from 'eslint-config-prettier'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
@@ -49,6 +50,7 @@ export default defineConfig([
     plugins: {
       react, // React 규칙
       prettier, // Prettier 통합
+      'simple-import-sort': simpleImportSort, // import 자동 정렬
     },
 
     // 커스텀 규칙
@@ -73,6 +75,10 @@ export default defineConfig([
 
       // React Hooks 규칙
       'react-hooks/exhaustive-deps': 'warn', // 의존성 배열 경고
+
+      // Import 정렬 규칙
+      'simple-import-sort/imports': 'warn', // import 정렬
+      'simple-import-sort/exports': 'warn', // export 정렬
 
       // Prettier 규칙 (.prettierrc 파일 참조)
       'prettier/prettier': 'warn', // Prettier 설정 위반 시 경고

@@ -6,9 +6,6 @@ package-lock.json
 # 빌드 결과물
 dist
 build
-.next
-.nuxt
-.output
 
 # 캐시
 .cache
@@ -18,4 +15,3 @@ build
 # 기타
 coverage
 *.log
-
