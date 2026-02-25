@@ -24,7 +24,7 @@ FBA (Feature-Based Architecture) + Atomic Design 패턴 사용.
 
 | 명령어 | 설명 |
 |--------|------|
-| `yarn dev` | 개발 서버 (http://localhost:3000) |
+| `yarn dev` | 개발 서버 (http://localhost:5173) |
 | `yarn build` | 프로덕션 빌드 (`tsc -b && vite build`) |
 | `yarn type-check` | TypeScript 타입 체크 (`tsc --noEmit`) |
 | `yarn lint` | ESLint 검사 |
@@ -61,7 +61,7 @@ FBA (Feature-Based Architecture) + Atomic Design 패턴 사용.
 |-----------|------|------|
 | 서버 데이터 | React Query | API 응답, 목록, 상세 |
 | 전역 클라이언트 | Zustand | 인증, 사용자 설정 |
-| 지역 UI | useState/useReducer | 폼 입력, 모달 |
+| 지역 UI | useState | 폼 입력, 모달 |
 
 ### 라우트 등록
 - `routes/routes.ts`에 경로 상수 추가
@@ -109,6 +109,22 @@ FBA (Feature-Based Architecture) + Atomic Design 패턴 사용.
 - Mutation 성공: `queryClient.invalidateQueries` + `showToast`
 - 복합 상태: `useXxxList` (페이지네이션, 검색, 선택 등)
 - 폼: `useXxxForm` (상태 + 유효성 검증)
+
+### 주석 원칙
+- **"왜(why)" 주석만 작성** — 코드가 "무엇(what)"을 하는지는 함수명/변수명으로 표현
+- **주석이 필요하면 코드를 먼저 의심** — 이름만으로 의도가 전달되도록 리팩토링 우선
+- **JSDoc (`/** */`)은 shared 컴포넌트의 props에만** — 타입만으로 불분명한 기본값/동작 설명 시 사용
+- **주석 처리된 코드 금지** — TODO는 허용하되, 예시 코드 블록은 문서로 분리
+- JSX 섹션 구분 주석 (`{/* 이메일 */}`) 지양 — Label/id가 이미 역할을 설명
+
+| 주석이 필요한 경우 | 예시 |
+|---|---|
+| 비직관적인 비즈니스 규칙 | `// 3일 이내 취소만 전액 환불 (정책 v2.3)` |
+| 보안/방어 의도 | `// CSRF 방어: 브라우저에서만 설정 가능한 헤더` |
+| workaround/우회 | `// Safari date input 빈 문자열 반환 버그 우회` |
+| 성능 최적화 근거 | `// O(n²) 회피를 위해 Map으로 사전 인덱싱` |
+| 알고리즘/검증 로직 명시 | `// Luhn 알고리즘`, `// 체크섬 검증` |
+| 불투명한 코드의 입출력 예시 | `// 01012345678 → 010-1234-5678` (regex 등) |
 
 ### Prettier
 `printWidth: 100`, `singleQuote: true`, `trailingComma: 'all'`, `endOfLine: 'lf'`, `tabWidth: 2`, `semi: true`
