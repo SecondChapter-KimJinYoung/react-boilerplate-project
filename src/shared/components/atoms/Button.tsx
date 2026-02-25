@@ -1,4 +1,4 @@
-import { type ButtonHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes, Ref } from 'react';
 
 import { cn } from '@/shared/utils/cn';
 
@@ -8,6 +8,7 @@ type ButtonSize = 'sm' | 'md';
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  ref?: Ref<HTMLButtonElement>;
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
@@ -25,12 +26,14 @@ const sizeStyles: Record<ButtonSize, string> = {
 const Button = ({
   variant = 'primary',
   size = 'md',
+  ref,
   className,
   children,
   ...props
 }: ButtonProps) => {
   return (
     <button
+      ref={ref}
       className={cn(
         'rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
         variantStyles[variant],
