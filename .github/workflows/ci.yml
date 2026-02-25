@@ -182,12 +182,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
 
-      # VITE_API_URL: GitHub Secrets에 저장된 API 서버 주소
+      # VITE_API_BASE_URL: GitHub Secrets에 저장된 API 서버 주소
       # 빌드 시점에 환경변수로 주입되어 번들에 포함됨
       - name: Build
         run: yarn build
         env:
-          VITE_API_URL: ${{ secrets.API_URL }}
+          VITE_API_BASE_URL: ${{ secrets.API_URL }}
 
       # 빌드 결과물을 GitHub 아티팩트로 업로드
       # retention-days: 7 → 7일 후 자동 삭제 (스토리지 절약)
