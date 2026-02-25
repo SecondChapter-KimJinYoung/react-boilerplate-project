@@ -1,21 +1,11 @@
-/**
- * Example API 타입 정의
- *
- * 패턴:
- * 1. Entities: 서버에서 반환하는 실제 데이터 구조
- * 2. Requests: API 요청 파라미터 타입
- * 3. Responses: API 응답 타입 (ListResponse, ApiResponse 사용)
- */
-
 import type {
   ApiResponse,
-  ListResponse,
-  PostResponse,
-  PatchResponse,
   DeleteResponse,
+  ListResponse,
+  PatchResponse,
+  PostResponse,
 } from '../api.types';
 
-// ============ Entities ============
 export interface ExampleItem {
   id: number;
   name: string;
@@ -27,7 +17,6 @@ export interface ExampleItem {
   updatedAt: string;
 }
 
-// ============ Requests ============
 export interface GetExampleListRequest {
   page?: number;
   size?: number;
@@ -53,7 +42,6 @@ export type DeleteExampleRequest = {
   ids: number[];
 };
 
-// ============ Responses ============
 export type GetExampleListResponse = ListResponse<ExampleItem>;
 export type GetExampleDetailResponse = ApiResponse<ExampleItem>;
 export type PostExampleResponse = PostResponse;
