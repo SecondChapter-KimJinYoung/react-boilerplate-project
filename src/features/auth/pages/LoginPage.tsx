@@ -1,22 +1,16 @@
-/**
- * 로그인 페이지
- *
- * 기존 아톰 컴포넌트를 활용한 로그인 폼 UI입니다.
- * TODO: handleSubmit 내부의 시뮬레이션 로직을 실제 API 호출로 교체하세요.
- */
-
 import { type FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Input from '@/shared/components/atoms/Input';
+
+import { STORAGE_KEYS } from '@/api/api.constants';
+import { ROUTES } from '@/routes/routes';
 import Button from '@/shared/components/atoms/Button';
 import Checkbox from '@/shared/components/atoms/Checkbox';
-import Label from '@/shared/components/atoms/Label';
 import ErrorMessage from '@/shared/components/atoms/ErrorMessage';
-import { ROUTES } from '@/routes/routes';
-import { showToast } from '@/shared/utils/toast.utils';
-import { useAuthStore } from '@/shared/stores/auth.store';
-import { STORAGE_KEYS } from '@/api/api.constants';
+import Input from '@/shared/components/atoms/Input';
+import Label from '@/shared/components/atoms/Label';
 import { EMAIL_REGEX } from '@/shared/constants/regex.patterns';
+import { useAuthStore } from '@/shared/stores/auth.store';
+import { showToast } from '@/shared/utils/toast.utils';
 
 interface LoginErrors {
   email?: string;
@@ -59,7 +53,6 @@ const LoginPage = () => {
     e.preventDefault();
     if (!validate()) return;
 
-    // 이메일 저장 처리
     if (rememberEmail) {
       localStorage.setItem(STORAGE_KEYS.REMEMBERED_EMAIL, email.trim());
     } else {
@@ -89,7 +82,6 @@ const LoginPage = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* 이메일 */}
         <div className="space-y-1">
           <Label htmlFor="email">이메일</Label>
           <Input
@@ -107,7 +99,6 @@ const LoginPage = () => {
           <ErrorMessage message={errors.email} />
         </div>
 
-        {/* 비밀번호 */}
         <div className="space-y-1">
           <Label htmlFor="password">비밀번호</Label>
           <Input
@@ -125,7 +116,6 @@ const LoginPage = () => {
           <ErrorMessage message={errors.password} />
         </div>
 
-        {/* 이메일 저장 */}
         <div className="flex items-center gap-2">
           <Checkbox
             id="remember"
@@ -137,13 +127,11 @@ const LoginPage = () => {
           </Label>
         </div>
 
-        {/* 로그인 버튼 */}
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? '로그인 중...' : '로그인'}
         </Button>
       </form>
 
-      {/* 하단 링크 */}
       <div className="flex justify-center gap-4 text-sm text-gray-500">
         <button
           type="button"

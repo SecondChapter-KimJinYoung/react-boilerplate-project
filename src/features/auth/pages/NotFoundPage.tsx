@@ -1,12 +1,7 @@
-/**
- * 404 페이지
- *
- * 존재하지 않는 경로에 접근했을 때 표시합니다.
- */
-
 import { useNavigate } from 'react-router-dom';
-import Button from '@/shared/components/atoms/Button';
+
 import { ROUTES } from '@/routes/routes';
+import Button from '@/shared/components/atoms/Button';
 
 const NotFoundPage = () => {
   const navigate = useNavigate();

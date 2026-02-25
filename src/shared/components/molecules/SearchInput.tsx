@@ -1,4 +1,5 @@
 import { type FormEvent } from 'react';
+
 import Input from '@/shared/components/atoms/Input';
 
 interface SearchInputProps {

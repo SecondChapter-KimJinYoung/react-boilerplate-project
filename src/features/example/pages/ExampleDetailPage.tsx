@@ -1,13 +1,15 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import { ROUTES } from '@/routes/routes';
-import { useExampleDetail, useDeleteExample } from '../hooks/useExample';
-import { getExampleStatusLabel } from '../utils/status.utils';
 import Button from '@/shared/components/atoms/Button';
 import Label from '@/shared/components/atoms/Label';
-import ConfirmDialog from '@/shared/components/organisms/ConfirmDialog';
-import LoadingState from '@/shared/components/molecules/LoadingState';
 import ErrorState from '@/shared/components/molecules/ErrorState';
-import { useState } from 'react';
+import LoadingState from '@/shared/components/molecules/LoadingState';
+import ConfirmDialog from '@/shared/components/organisms/ConfirmDialog';
+
+import { useDeleteExample, useExampleDetail } from '../hooks/useExample';
+import { getExampleStatusLabel } from '../utils/status.utils';
 
 const ExampleDetailPage = () => {
   const { id } = useParams<{ id: string }>();

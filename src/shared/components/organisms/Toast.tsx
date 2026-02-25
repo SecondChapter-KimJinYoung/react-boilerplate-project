@@ -1,14 +1,8 @@
-/**
- * 토스트 알림 컴포넌트
- *
- * CustomEvent 기반으로 전역에서 호출 가능한 토스트 알림입니다.
- * showToast()를 통해 어디서든 토스트를 발행하면 이 컴포넌트가 렌더링합니다.
- */
-
 import { useCallback, useEffect, useState } from 'react';
-import { TOAST_EVENT } from '@/shared/utils/toast.utils';
-import type { ToastOptions, ToastVariant } from '@/shared/utils/toast.utils';
+
 import { cn } from '@/shared/utils/cn';
+import type { ToastOptions, ToastVariant } from '@/shared/utils/toast.utils';
+import { TOAST_EVENT } from '@/shared/utils/toast.utils';
 
 interface InternalToast extends ToastOptions {
   id: string;
@@ -34,8 +28,6 @@ const variantIcons: Record<ToastVariant, string> = {
   warning: '\u0021',
 };
 
-// ============ ToastItem — 개별 토스트의 타이머를 독립 관리 ============
-
 interface ToastItemProps {
   toast: InternalToast;
   onClose: (id: string) => void;
@@ -59,15 +51,12 @@ const ToastItem = ({ toast, onClose }: ToastItemProps) => {
         toast.open ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0',
       )}
     >
-      {/* 아이콘 */}
       <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs font-bold">
         {variantIcons[variant]}
       </span>
 
-      {/* 메시지 */}
       <p className="flex-1 text-sm font-medium">{toast.message}</p>
 
-      {/* 닫기 버튼 */}
       <button
         type="button"
         onClick={() => onClose(toast.id)}
@@ -78,8 +67,6 @@ const ToastItem = ({ toast, onClose }: ToastItemProps) => {
     </div>
   );
 };
-
-// ============ Toast 컨테이너 ============
 
 const Toast = () => {
   const [toasts, setToasts] = useState<InternalToast[]>([]);

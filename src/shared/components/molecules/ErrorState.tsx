@@ -1,5 +1,5 @@
-import { cn } from '@/shared/utils/cn';
 import Button from '@/shared/components/atoms/Button';
+import { cn } from '@/shared/utils/cn';
 
 interface ErrorStateProps {
   message?: string;

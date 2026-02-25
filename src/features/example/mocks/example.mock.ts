@@ -1,8 +1,3 @@
-/**
- * Example 더미 데이터
- * API 연동 전 개발/테스트용
- */
-
 import type { ExampleItem } from '@/api/example/example.types';
 
 export const exampleMockList: ExampleItem[] = [
@@ -98,12 +93,6 @@ export const exampleMockList: ExampleItem[] = [
   },
 ];
 
-export const exampleMockTotalCount = 10;
-
-/**
- * Example 상세 더미 데이터 생성
- * Detail과 Edit 페이지에서 사용
- */
 export const getExampleMockDetail = (id: number): ExampleItem => ({
   id,
   name: `Example ${id}`,

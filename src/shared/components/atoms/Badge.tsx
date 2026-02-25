@@ -1,4 +1,5 @@
 import { type HTMLAttributes } from 'react';
+
 import { cn } from '@/shared/utils/cn';
 
 type BadgeVariant = 'success' | 'warning' | 'error' | 'neutral';

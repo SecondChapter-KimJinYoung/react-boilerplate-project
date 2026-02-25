@@ -1,23 +1,14 @@
-/**
- * Example 목록 테이블 훅
- *
- * 테이블 상태 관리:
- * - 페이지네이션
- * - 검색/필터
- * - 선택 상태
- * - 모달 상태
- */
+import { useMemo, useState } from 'react';
 
-import { useState, useMemo } from 'react';
-import { useExampleListQuery, useDeleteManyExamples } from './useExample';
 import type { ExampleItem } from '@/api/example/example.types';
+
+import { useDeleteManyExamples, useExampleListQuery } from './useExample';
 
 type OrderBy = 'ASC' | 'DESC';
 
 const PAGE_SIZE = 10;
 
 export const useExampleList = () => {
-  // ============ State ============
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [keyword, setKeyword] = useState('');
@@ -30,7 +21,6 @@ export const useExampleList = () => {
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [isDeleteItemModalOpen, setIsDeleteItemModalOpen] = useState(false);
 
-  // ============ Data (API 사용) ============
   const query = useExampleListQuery({ page, size: PAGE_SIZE, keyword, sort, orderBy });
   const deleteManyMutation = useDeleteManyExamples();
 
@@ -41,17 +31,14 @@ export const useExampleList = () => {
   const isFetching = query.isFetching;
   const isError = query.isError;
 
-  // ============ Selection ============
   const listIdSet = useMemo(() => new Set(list.map((item: ExampleItem) => item.id)), [list]);
 
-  // 현재 리스트에 없는 선택 항목 자동 필터링 (파생 상태)
-  // listIds가 변경되면 자동으로 유효하지 않은 항목이 제거됨
+  // 페이지 전환 시 이전 페이지 항목이 selected에 남는 것을 방지 (파생 상태)
   const filteredSelected = useMemo(
     () => selected.filter((id) => listIdSet.has(id)),
     [selected, listIdSet],
   );
 
-  // selected를 항상 필터링된 상태로 유지 (listIds 변경 시 자동으로 필터링됨)
   const selectedToUse = filteredSelected;
   const selectedSet = useMemo(() => new Set(selectedToUse), [selectedToUse]);
 
@@ -72,7 +59,6 @@ export const useExampleList = () => {
     }
   };
 
-  // ============ Delete Actions ============
   const handleDelete = () => {
     if (!selected.length) return;
     setIsDeleteModalOpen(true);
@@ -112,7 +98,6 @@ export const useExampleList = () => {
     setIsDeleteItemModalOpen(false);
   };
 
-  // ============ Filter Actions ============
   const handleSortChange = (value: string) => {
     setSortInput(value);
   };
@@ -151,7 +136,6 @@ export const useExampleList = () => {
     await query.refetch();
   };
 
-  // ============ Return ============
   return {
     data: { list, total, page, totalPages },
     status: { isLoading, isFetching, isError },

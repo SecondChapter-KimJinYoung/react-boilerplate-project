@@ -1,12 +1,6 @@
-/**
- * 에러 바운더리
- *
- * React 렌더링 중 발생하는 에러를 포착하여 대체 UI를 표시합니다.
- * App 최상위에 배치하여 전체 애플리케이션의 크래시를 방지합니다.
- */
-
-import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
+import { Component } from 'react';
+
 import Button from '@/shared/components/atoms/Button';
 
 interface ErrorBoundaryProps {
@@ -45,12 +39,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   render() {
     if (this.state.hasError) {
-      // 커스텀 fallback이 있으면 사용
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
-      // 기본 에러 UI
       return (
         <div className="flex min-h-screen items-center justify-center bg-gray-50">
           <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 text-center">

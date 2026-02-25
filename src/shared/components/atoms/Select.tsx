@@ -1,7 +1,8 @@
-import { type SelectHTMLAttributes, forwardRef } from 'react';
+import { forwardRef, type SelectHTMLAttributes } from 'react';
+
 import { cn } from '@/shared/utils/cn';
 
-interface SelectOption {
+export interface SelectOption {
   value: string | number;
   label: string;
 }

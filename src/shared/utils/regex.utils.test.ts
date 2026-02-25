@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { validate, format, mask, extract, sanitize, getErrorMessage } from './regex.utils';
+import { describe, expect, it } from 'vitest';
+
+import { extract, format, getErrorMessage, mask, sanitize, validate } from './regex.utils';
 
 // ============================================================================
 // validate
