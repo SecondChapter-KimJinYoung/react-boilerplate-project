@@ -9,7 +9,7 @@ import LoadingState from '@/shared/components/molecules/LoadingState';
 import ConfirmDialog from '@/shared/components/organisms/ConfirmDialog';
 
 import { useDeleteExample, useExampleDetail } from '../hooks/useExample';
-import { getExampleStatusLabel } from '../utils/status.utils';
+import { getExampleStatusLabel } from '../utils/status-utils';
 
 const ExampleDetailPage = () => {
   const { id } = useParams<{ id: string }>();

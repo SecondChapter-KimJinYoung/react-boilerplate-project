@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import type { ExampleItem } from '@/api/example/example.types';
+import type { ExampleItem } from '@/api/example/example-types';
 import { ROUTES } from '@/routes/routes';
 import Button from '@/shared/components/atoms/Button';
 import Checkbox from '@/shared/components/atoms/Checkbox';
@@ -9,7 +9,7 @@ import Pagination from '@/shared/components/molecules/Pagination';
 import SearchInput from '@/shared/components/molecules/SearchInput';
 import ConfirmDialog from '@/shared/components/organisms/ConfirmDialog';
 
-import { EXAMPLE_TABLE_HEAD } from '../constants/example.constants';
+import { EXAMPLE_TABLE_HEAD } from '../constants/example-constants';
 import { useExampleList } from '../hooks/useExampleList';
 
 const ExampleListPage = () => {

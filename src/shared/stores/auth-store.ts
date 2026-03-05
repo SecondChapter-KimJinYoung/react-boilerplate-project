@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { STORAGE_KEYS } from '@/api/api.constants';
+import { STORAGE_KEYS } from '@/api/api-constants';
 
 export interface User {
   id: number;

@@ -10,7 +10,7 @@ import ErrorState from '@/shared/components/molecules/ErrorState';
 import FormField from '@/shared/components/molecules/FormField';
 import LoadingState from '@/shared/components/molecules/LoadingState';
 
-import { EXAMPLE_STATUS_OPTIONS } from '../constants/example.constants';
+import { EXAMPLE_STATUS_OPTIONS } from '../constants/example-constants';
 import { useExampleDetail, useUpdateExample } from '../hooks/useExample';
 import { useExampleForm } from '../hooks/useExampleForm';
 

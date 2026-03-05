@@ -35,17 +35,22 @@ prefix: 주요 메시지 (50자 이내)
 
 ## 파일 네이밍
 
-| 종류     | 패턴                    | 예시                                       |
-| -------- | ----------------------- | ------------------------------------------ |
-| 페이지   | `XxxPage.tsx`           | `LoginPage.tsx`, `ExampleListPage.tsx`     |
-| 컴포넌트 | `PascalCase.tsx`        | `Button.tsx`, `SearchInput.tsx`            |
-| 훅       | `useXxx.ts`             | `useExample.ts`, `useExampleForm.ts`       |
-| 유틸     | `[도메인].utils.ts`     | `toast.utils.ts`, `regex.utils.ts`         |
-| 타입     | `[도메인].types.ts`     | `api.types.ts`, `example.types.ts`         |
-| 상수     | `[도메인].constants.ts` | `api.constants.ts`, `example.constants.ts` |
-| 스토어   | `[도메인].store.ts`     | `auth.store.ts`                            |
-| API 함수 | `[도메인].api.ts`       | `example.api.ts`                           |
-| 패턴     | `[도메인].patterns.ts`  | `regex.patterns.ts`                        |
+| 종류     | 패턴                       | 예시                                           |
+| -------- | -------------------------- | ---------------------------------------------- |
+| 페이지   | `XxxPage.tsx`              | `LoginPage.tsx`, `ExampleListPage.tsx`          |
+| 컴포넌트 | `PascalCase.tsx`           | `Button.tsx`, `SearchInput.tsx`                 |
+| 훅       | `useXxx.ts`                | `useExample.ts`, `useExampleForm.ts`            |
+| API 함수 | `[도메인]-api.ts`          | `example-api.ts`                               |
+| API 타입 | `[도메인]-types.ts`        | `api-types.ts`, `example-types.ts`              |
+| 유틸     | `[도메인]-utils.ts`        | `toast-utils.ts`, `regex-utils.ts`              |
+| 상수     | `[도메인]-constants.ts`    | `api-constants.ts`, `example-constants.ts`      |
+| 스토어   | `[도메인]-store.ts`        | `auth-store.ts`                                 |
+| 쿼리 키  | `[도메인]-query-keys.ts`   | `example-query-keys.ts`                         |
+| 패턴     | `[도메인]-patterns.ts`     | `regex-patterns.ts`                             |
+| 테스트   | `[파일명].test.ts`         | `regex-utils.test.ts`                           |
+
+**비-컴포넌트 파일은 kebab-case**, 컴포넌트/페이지는 PascalCase.
+테스트 파일의 `.test.`은 테스트 러너 규칙이므로 유지.
 
 **barrel file (`index.ts`) 사용 안 함** — 직접 경로로 import.
 

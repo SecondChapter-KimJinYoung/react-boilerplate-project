@@ -16,8 +16,8 @@ src/features/user/
 
 ```
 src/api/user/
-├── user.api.ts     # CRUD 함수
-└── user.types.ts   # 요청/응답 타입
+├── user-api.ts     # CRUD 함수
+└── user-types.ts   # 요청/응답 타입
 ```
 
 ## 3. 라우트 등록

@@ -1,8 +1,8 @@
 import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import axios, { AxiosError } from 'axios';
 
-import { clearAuthStorage } from '@/shared/stores/auth.store';
-import { showToast } from '@/shared/utils/toast.utils';
+import { clearAuthStorage } from '@/shared/stores/auth-store';
+import { showToast } from '@/shared/utils/toast-utils';
 
 import { ROUTES } from '../routes/routes';
 import {
@@ -12,9 +12,9 @@ import {
   HEADERS,
   HTTP_STATUS,
   STORAGE_KEYS,
-} from './api.constants';
-import { API_ENDPOINTS } from './api.endpoints';
-import type { ApiResponse } from './api.types';
+} from './api-constants';
+import { API_ENDPOINTS } from './api-endpoints';
+import type { ApiResponse } from './api-types';
 
 interface QueueItem {
   resolve: (token: string) => void;

@@ -5,11 +5,11 @@ import type {
   GetExampleListRequest,
   PatchExampleRequest,
   PostExampleRequest,
-} from '@/api/example/example.types';
-import { EXAMPLE_QUERY_KEYS } from '@/shared/constants/query-keys';
-import { showToast } from '@/shared/utils/toast.utils';
+} from '@/api/example/example-types';
+import { EXAMPLE_QUERY_KEYS } from '@/shared/constants/query-keys/example-query-keys';
+import { showToast } from '@/shared/utils/toast-utils';
 
-import { exampleMockList, getExampleMockDetail } from '../mocks/example.mock';
+import { exampleMockList, getExampleMockDetail } from '../mocks/example-mock';
 
 const mockApiDelay = (ms: number = 500) => new Promise((resolve) => setTimeout(resolve, ms));
 

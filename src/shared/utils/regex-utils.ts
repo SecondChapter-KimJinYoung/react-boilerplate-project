@@ -3,7 +3,7 @@ import {
   HTML_TAG_REGEX,
   PHONE_REGEX,
   YOUTUBE_ID_REGEX,
-} from '@/shared/constants/regex.patterns';
+} from '@/shared/constants/regex-patterns';
 
 export const validate = {
   email: (email: string): boolean => {

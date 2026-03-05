@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-import { showToast } from '@/shared/utils/toast.utils';
+import { showToast } from '@/shared/utils/toast-utils';
 
-import { API_MESSAGES, HTTP_STATUS } from './api.constants';
-import type { ApiError } from './api.types';
+import { API_MESSAGES, HTTP_STATUS } from './api-constants';
+import type { ApiError } from './api-types';
 
 type ErrorPayload = ApiError<unknown>;
 

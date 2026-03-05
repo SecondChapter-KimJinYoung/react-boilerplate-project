@@ -4,7 +4,7 @@ import type {
   ListResponse,
   PatchResponse,
   PostResponse,
-} from '../api.types';
+} from '../api-types';
 
 export interface ExampleItem {
   id: number;

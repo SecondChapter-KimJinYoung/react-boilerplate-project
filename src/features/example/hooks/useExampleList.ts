@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import type { ExampleItem } from '@/api/example/example.types';
+import type { ExampleItem } from '@/api/example/example-types';
 import useDebounce from '@/shared/hooks/useDebounce';
 
 import { useDeleteManyExamples, useExampleListQuery } from './useExample';

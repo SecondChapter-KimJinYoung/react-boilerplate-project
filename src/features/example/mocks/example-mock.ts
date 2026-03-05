@@ -1,4 +1,4 @@
-import type { ExampleItem } from '@/api/example/example.types';
+import type { ExampleItem } from '@/api/example/example-types';
 
 export const exampleMockList: ExampleItem[] = [
   {

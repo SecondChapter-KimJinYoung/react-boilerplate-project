@@ -3,11 +3,11 @@ import { AxiosError } from 'axios';
 
 import { base64ToBlob, getMimeTypeFromFilename, sanitizeFilename } from '@/shared/utils/file';
 
-import type { ErrorResponseData, ExtendedAxiosRequestConfig } from './api.client';
-import { apiClient, getNetworkErrorMessage } from './api.client';
-import { API_MESSAGES, HEADERS, HTTP_STATUS } from './api.constants';
-import type { ApiResponse } from './api.types';
-import { getErrorMessageByStatusCode, handleError } from './api.utils';
+import type { ErrorResponseData, ExtendedAxiosRequestConfig } from './api-client';
+import { apiClient, getNetworkErrorMessage } from './api-client';
+import { API_MESSAGES, HEADERS, HTTP_STATUS } from './api-constants';
+import type { ApiResponse } from './api-types';
+import { getErrorMessageByStatusCode, handleError } from './api-utils';
 
 export interface ApiRequestOptions {
   skipAuth?: boolean;

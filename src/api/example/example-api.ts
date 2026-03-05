@@ -1,5 +1,5 @@
 import { del, get, patch, post } from '@/api/api';
-import { API_ENDPOINTS } from '@/api/api.endpoints';
+import { API_ENDPOINTS } from '@/api/api-endpoints';
 
 import type {
   DeleteExampleResponse,
@@ -10,7 +10,7 @@ import type {
   PatchExampleResponse,
   PostExampleRequest,
   PostExampleResponse,
-} from './example.types';
+} from './example-types';
 
 export const exampleApi = {
   list: (params?: GetExampleListRequest) =>

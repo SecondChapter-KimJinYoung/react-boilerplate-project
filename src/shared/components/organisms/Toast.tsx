@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { cn } from '@/shared/utils/cn';
-import type { ToastOptions, ToastVariant } from '@/shared/utils/toast.utils';
-import { TOAST_EVENT } from '@/shared/utils/toast.utils';
+import type { ToastOptions, ToastVariant } from '@/shared/utils/toast-utils';
+import { TOAST_EVENT } from '@/shared/utils/toast-utils';
 
 interface InternalToast extends ToastOptions {
   id: string;

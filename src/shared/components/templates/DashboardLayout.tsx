@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 
 import { ROUTES } from '@/routes/routes';
 import { SIDEBAR_NAV_ITEMS } from '@/shared/constants/navigation';
-import { useAuthStore } from '@/shared/stores/auth.store';
+import { useAuthStore } from '@/shared/stores/auth-store';
 import { cn } from '@/shared/utils/cn';
 
 const DashboardLayout = () => {

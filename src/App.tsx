@@ -6,14 +6,15 @@ import { AppRouter } from '@/routes/router';
 import ErrorBoundary from '@/shared/components/ErrorBoundary';
 import LoadingState from '@/shared/components/molecules/LoadingState';
 import Toast from '@/shared/components/organisms/Toast';
+import { GC_TIME } from '@/shared/constants/query-config';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 5, // 5분
-      gcTime: 1000 * 60 * 10, // 10분 (구 cacheTime)
+      staleTime: 0,
+      gcTime: GC_TIME.DEFAULT,
     },
   },
 });

@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
 import { ROUTES } from '@/routes/routes';
-import { useAuthStore } from '@/shared/stores/auth.store';
+import { useAuthStore } from '@/shared/stores/auth-store';
 
 const AuthRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
