@@ -63,6 +63,8 @@ FBA (Feature-Based Architecture) + Atomic Design 패턴 사용.
 | 전역 클라이언트 | Zustand | 인증, 사용자 설정 |
 | 지역 UI | useState | 폼 입력, 모달 |
 
+- Zustand 스토어 속성이 5개 이상이면 개별 셀렉터 사용: `useAuthStore(s => s.user)`
+
 ### 라우트 등록
 - `routes/routes.ts`에 경로 상수 추가
 - `routes/router.tsx`에 `lazyImport`로 페이지 등록

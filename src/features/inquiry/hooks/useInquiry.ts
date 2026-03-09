@@ -9,6 +9,7 @@ import type {
   PatchInquiryRequest,
   PostInquiryRequest,
 } from '@/api/inquiry/inquiry-types';
+import { STALE_TIME } from '@/shared/constants/query-config';
 import { INQUIRY_QUERY_KEYS } from '@/shared/constants/query-keys/inquiry-query-keys';
 import { showToast } from '@/shared/utils/toast-utils';
 
@@ -18,6 +19,7 @@ export const useInquiryListQuery = (params?: GetInquiryListRequest) =>
   useQuery({
     queryKey: INQUIRY_QUERY_KEYS.list(params),
     queryFn: () => inquiryApi.list(params),
+    staleTime: STALE_TIME.MODERATE,
     placeholderData: keepPreviousData,
   });
 
@@ -25,12 +27,14 @@ export const useInquiryMyListQuery = () =>
   useQuery({
     queryKey: INQUIRY_QUERY_KEYS.myList(),
     queryFn: () => inquiryApi.myList(),
+    staleTime: STALE_TIME.MODERATE,
   });
 
 export const useInquiryDetailQuery = (id?: number) =>
   useQuery({
     queryKey: INQUIRY_QUERY_KEYS.detail(id),
     queryFn: () => inquiryApi.detail(id as number),
+    staleTime: STALE_TIME.MODERATE,
     enabled: Boolean(id),
   });
 

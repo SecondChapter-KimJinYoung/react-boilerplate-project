@@ -6,6 +6,7 @@ import type {
   PatchExampleRequest,
   PostExampleRequest,
 } from '@/api/example/example-types';
+import { STALE_TIME } from '@/shared/constants/query-config';
 import { EXAMPLE_QUERY_KEYS } from '@/shared/constants/query-keys/example-query-keys';
 import { showToast } from '@/shared/utils/toast-utils';
 
@@ -71,6 +72,7 @@ export const useExampleListQuery = (params?: GetExampleListRequest) =>
   useQuery({
     queryKey: EXAMPLE_QUERY_KEYS.list(params),
     queryFn: () => mockExampleApi.list(params),
+    staleTime: STALE_TIME.MODERATE,
     placeholderData: keepPreviousData,
   });
 
@@ -78,6 +80,7 @@ export const useExampleDetail = (id?: number) =>
   useQuery({
     queryKey: EXAMPLE_QUERY_KEYS.detail(id),
     queryFn: () => mockExampleApi.detail(id as number),
+    staleTime: STALE_TIME.MODERATE,
     enabled: Boolean(id),
   });
 
