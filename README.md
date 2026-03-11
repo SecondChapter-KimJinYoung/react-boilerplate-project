@@ -50,9 +50,8 @@ src/
 │   ├── api.ts                    #   공통 CRUD 헬퍼 (get, post, put, patch, delete)
 │   ├── api-client.ts             #   Axios 인스턴스, 인터셉터, 토큰 갱신
 │   ├── api-types.ts              #   공통 API 응답/에러 타입
-│   ├── api-constants.ts          #   HTTP 상수, 메시지 상수, 스토리지 키
+│   ├── api-constants.ts          #   설정, 헤더, 스토리지 키, 메시지 상수
 │   ├── api-endpoints.ts          #   엔드포인트 URL 상수
-│   ├── api-utils.ts              #   에러 파싱, 메시지 매핑
 │   └── example/                  #   [도메인] API 모듈
 │
 ├── features/                     # 기능 모듈 (FBA)
@@ -69,7 +68,7 @@ src/
 │   │   └── templates/            #     AuthLayout, DashboardLayout
 │   ├── stores/                   #   Zustand 스토어
 │   ├── constants/                #   query-keys/, query-config, regex-patterns, navigation
-│   └── utils/                    #   cn, lazy, file, toast, regex
+│   └── utils/                    #   cn, lazy, toast, regex
 │
 ├── routes/                       # 라우팅 (lazy import)
 ├── App.tsx                       # QueryProvider + ErrorBoundary + Suspense + Toast

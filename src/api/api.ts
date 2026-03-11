@@ -1,13 +1,8 @@
-import type { AxiosResponse } from 'axios';
 import { AxiosError } from 'axios';
-
-import { base64ToBlob, getMimeTypeFromFilename, sanitizeFilename } from '@/shared/utils/file';
 
 import type { ErrorResponseData, ExtendedAxiosRequestConfig } from './api-client';
 import { apiClient, getNetworkErrorMessage } from './api-client';
-import { API_MESSAGES, HEADERS, HTTP_STATUS } from './api-constants';
-import type { ApiResponse } from './api-types';
-import { getErrorMessageByStatusCode, handleError } from './api-utils';
+import { HEADERS } from './api-constants';
 
 export interface ApiRequestOptions {
   skipAuth?: boolean;
@@ -17,6 +12,8 @@ export interface ApiRequestOptions {
     password: string;
   };
 }
+
+const DEFAULT_ERROR_MESSAGE = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
 
 export class ApiError extends Error {
   statusCode: number;
@@ -34,28 +31,21 @@ export class ApiError extends Error {
 
 export const handleApiError = (error: unknown): ApiError => {
   if (error instanceof AxiosError) {
-    const statusCode = error.response?.status || HTTP_STATUS.INTERNAL_SERVER_ERROR;
+    const statusCode = error.response?.status || 500;
     const responseData = error.response?.data as ErrorResponseData | undefined;
 
     if (error.message === 'Network Error' || !error.response) {
       const networkMessage = getNetworkErrorMessage(error);
-      handleError(error, { fallbackMessage: networkMessage, silent: true });
       return new ApiError(0, networkMessage, 'NETWORK_ERROR');
     }
 
-    const message = responseData?.message || getErrorMessageByStatusCode(statusCode);
+    const message = responseData?.message || DEFAULT_ERROR_MESSAGE;
     const code = responseData?.code || 'UNKNOWN_ERROR';
     const errors = responseData?.errors || [];
-    handleError(error, { fallbackMessage: message, silent: true });
     return new ApiError(statusCode, message, code, errors);
   }
 
-  handleError(error, { fallbackMessage: API_MESSAGES.SERVER_ERROR.INTERNAL, silent: true });
-  return new ApiError(
-    HTTP_STATUS.INTERNAL_SERVER_ERROR,
-    API_MESSAGES.SERVER_ERROR.INTERNAL,
-    'UNKNOWN_ERROR',
-  );
+  return new ApiError(500, DEFAULT_ERROR_MESSAGE, 'UNKNOWN_ERROR');
 };
 
 export const get = async <TResponse, TParams = Record<string, unknown>>(
@@ -155,131 +145,6 @@ export const del = async <TResponse, TData = unknown>(
       skipErrorToast: options?.skipErrorToast,
     } as ExtendedAxiosRequestConfig);
     return response.data;
-  } catch (error) {
-    throw handleApiError(error);
-  }
-};
-
-export const uploadFile = async <T>(
-  url: string,
-  file: File,
-  path?: string,
-  options?: ApiRequestOptions & {
-    additionalFields?: Record<string, string>;
-  },
-): Promise<T> => {
-  try {
-    if (!file.type || file.type === 'application/octet-stream') {
-      const ext = file.name.split('.').pop()?.toLowerCase();
-      const allowedExtensions = [
-        'png',
-        'jpg',
-        'jpeg',
-        'gif',
-        'webp',
-        'heic',
-        'mp4',
-        'webm',
-        'ogg',
-        'mov',
-        'avi',
-        'pdf',
-        'doc',
-        'docx',
-        'xls',
-        'xlsx',
-      ];
-      if (!ext || !allowedExtensions.includes(ext)) {
-        throw new Error('허용되지 않은 파일 형식입니다.');
-      }
-    }
-
-    // XSS/Path Traversal 방지
-    const sanitizedPath = path ? sanitizeFilename(path, 'uploads') : undefined;
-
-    const formData = new FormData();
-    formData.append('file', file);
-    if (sanitizedPath) {
-      formData.append('path', sanitizedPath);
-    }
-    if (options?.additionalFields) {
-      Object.entries(options.additionalFields).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-    }
-
-    return post<T>(url, formData, {
-      skipAuth: options?.skipAuth,
-    });
-  } catch (error) {
-    throw handleApiError(error);
-  }
-};
-
-export const downloadFileAsBlob = async <TData = unknown>(
-  url: string,
-  data: TData,
-  filename?: string,
-  options?: ApiRequestOptions,
-): Promise<AxiosResponse<Blob>> => {
-  try {
-    const response = await apiClient.post<ApiResponse<string>>(
-      url,
-      data as unknown,
-      {
-        timeout: 60000,
-        skipAuth: options?.skipAuth,
-      } as ExtendedAxiosRequestConfig,
-    );
-
-    const base64String = response.data.payload;
-    if (!base64String || typeof base64String !== 'string') {
-      throw new Error('서버에서 base64 데이터를 받지 못했습니다.');
-    }
-
-    const safeFilename = sanitizeFilename(filename, 'download');
-    const mimeType = getMimeTypeFromFilename(safeFilename) || 'application/octet-stream';
-    const blob = base64ToBlob(base64String, mimeType);
-
-    if (import.meta.env.DEV) {
-      console.warn('Blob created:', { type: blob.type, size: blob.size, filename: safeFilename });
-    }
-
-    return { ...response, data: blob } as AxiosResponse<Blob>;
-  } catch (error) {
-    throw handleApiError(error);
-  }
-};
-
-export const downloadExcel = async <TData = unknown>(
-  url: string,
-  data: TData,
-  filename: string = 'export.xlsx',
-  options?: ApiRequestOptions,
-): Promise<void> => {
-  try {
-    const response = await apiClient.post<Blob>(
-      url,
-      data as unknown,
-      {
-        responseType: 'blob',
-        timeout: 60000,
-        skipAuth: options?.skipAuth,
-      } as ExtendedAxiosRequestConfig,
-    );
-
-    const safeFilename = sanitizeFilename(filename, 'download');
-    const blob = new Blob([response.data], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    const url_blob = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url_blob;
-    link.download = safeFilename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url_blob);
   } catch (error) {
     throw handleApiError(error);
   }
