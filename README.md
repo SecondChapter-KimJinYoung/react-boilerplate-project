@@ -49,7 +49,7 @@ src/
 ├── api/                          # API 레이어
 │   ├── api.ts                    #   공통 CRUD 헬퍼 (get, post, put, patch, delete)
 │   ├── api-client.ts             #   Axios 인스턴스, 인터셉터, 토큰 갱신
-│   ├── api-types.ts              #   공통 API 응답/에러 타입
+│   ├── api-types.ts              #   공통 API 응답 타입
 │   ├── api-constants.ts          #   설정, 헤더, 스토리지 키, 메시지 상수
 │   ├── api-endpoints.ts          #   엔드포인트 URL 상수
 │   └── example/                  #   [도메인] API 모듈
@@ -66,6 +66,7 @@ src/
 │   │   ├── molecules/            #     FormField, SearchInput, Pagination ...
 │   │   ├── organisms/            #     Toast, ConfirmDialog
 │   │   └── templates/            #     AuthLayout, DashboardLayout
+│   ├── hooks/                    #   커스텀 훅
 │   ├── stores/                   #   Zustand 스토어
 │   ├── constants/                #   query-keys/, query-config, regex-patterns, navigation
 │   └── utils/                    #   cn, lazy, toast, regex

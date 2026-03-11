@@ -77,7 +77,7 @@ FBA (Feature-Based Architecture) + Atomic Design 패턴 사용.
 |------|------|------|
 | 페이지 | `XxxPage.tsx` | `LoginPage.tsx`, `UserListPage.tsx` |
 | 컴포넌트 | `PascalCase.tsx` | `Button.tsx`, `SearchInput.tsx` |
-| 훅 | `useXxx.ts` | `useUser.ts`, `useUserForm.ts` |
+| 훅 | `useXxx.ts` | `useUserQueries.ts`, `useUserForm.ts` |
 | API 함수 | `[도메인]-api.ts` | `user-api.ts` |
 | API 타입 | `[도메인]-types.ts` | `user-types.ts` |
 | 유틸 | `[도메인]-utils.ts` | `toast-utils.ts` |
