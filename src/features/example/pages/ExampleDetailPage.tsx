@@ -8,7 +8,7 @@ import ErrorState from '@/shared/components/molecules/ErrorState';
 import LoadingState from '@/shared/components/molecules/LoadingState';
 import ConfirmDialog from '@/shared/components/organisms/ConfirmDialog';
 
-import { useDeleteExample, useExampleDetail } from '../hooks/useExample';
+import { useDeleteExample, useExampleDetailQuery } from '../hooks/useExampleQueries';
 import { getExampleStatusLabel } from '../utils/status-utils';
 
 const ExampleDetailPage = () => {
@@ -16,18 +16,21 @@ const ExampleDetailPage = () => {
   const exampleId = id ? Number(id) : 0;
   const navigate = useNavigate();
 
-  const detailQuery = useExampleDetail(exampleId);
+  const detailQuery = useExampleDetailQuery(exampleId);
   const deleteMutation = useDeleteExample();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleConfirmDelete = () => {
-    deleteMutation.mutate(exampleId, {
-      onSuccess: () => {
-        setIsDeleteModalOpen(false);
-        void navigate(`${ROUTES.EXAMPLE.LIST}`);
+    deleteMutation.mutate(
+      { ids: [exampleId] },
+      {
+        onSuccess: () => {
+          setIsDeleteModalOpen(false);
+          void navigate(`${ROUTES.EXAMPLE.LIST}`);
+        },
       },
-    });
+    );
   };
 
   if (detailQuery.isLoading) {
@@ -38,7 +41,7 @@ const ExampleDetailPage = () => {
     return <ErrorState onRetry={() => void detailQuery.refetch()} />;
   }
 
-  const example = detailQuery.data;
+  const example = detailQuery.data.payload;
 
   return (
     <div className="space-y-6">

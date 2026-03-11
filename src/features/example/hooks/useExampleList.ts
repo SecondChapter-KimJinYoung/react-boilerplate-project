@@ -3,47 +3,44 @@ import { useMemo, useState } from 'react';
 import type { ExampleItem } from '@/api/example/example-types';
 import useDebounce from '@/shared/hooks/useDebounce';
 
-import { useDeleteManyExamples, useExampleListQuery } from './useExample';
+import { useDeleteExample, useExampleListQuery } from './useExampleQueries';
 
 type OrderBy = 'ASC' | 'DESC';
 
 const PAGE_SIZE = 10;
 
 export const useExampleList = () => {
+  // ── State ──
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearch = useDebounce(searchInput, 300);
   const [sort, setSort] = useState('createdAt');
   const [orderBy, setOrderBy] = useState<OrderBy>('ASC');
-  const [sortInput, setSortInput] = useState('createdAt');
-  const [orderByInput, setOrderByInput] = useState<OrderBy>('ASC');
   const [selected, setSelected] = useState<number[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
-  const [isDeleteItemModalOpen, setIsDeleteItemModalOpen] = useState(false);
 
+  // ── Query ──
   const keyword = debouncedSearch.trim();
-
   const query = useExampleListQuery({ page, size: PAGE_SIZE, keyword, sort, orderBy });
-  const deleteManyMutation = useDeleteManyExamples();
+  const deleteMutation = useDeleteExample();
 
-  const list = useMemo(() => query.data?.list ?? [], [query.data?.list]);
-  const total = query.data?.totalCount || 0;
+  // ── Derived ──
+  const list = useMemo(() => query.data?.payload.list ?? [], [query.data?.payload.list]);
+  const total = query.data?.payload.totalCount || 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const isLoading = query.isLoading;
   const isFetching = query.isFetching;
   const isError = query.isError;
 
+  // ── Selection ──
   const listIdSet = useMemo(() => new Set(list.map((item: ExampleItem) => item.id)), [list]);
 
-  // 페이지 전환 시 이전 페이지 항목이 selected에 남는 것을 방지 (파생 상태)
   const filteredSelected = useMemo(
     () => selected.filter((id) => listIdSet.has(id)),
     [selected, listIdSet],
   );
 
-  const selectedToUse = filteredSelected;
-  const selectedSet = useMemo(() => new Set(selectedToUse), [selectedToUse]);
+  const selectedSet = useMemo(() => new Set(filteredSelected), [filteredSelected]);
 
   const toggleSelect = (id: number) => {
     setSelected((prev) => {
@@ -54,65 +51,45 @@ export const useExampleList = () => {
 
   const toggleSelectAll = () => {
     if (!list.length) return;
-    const currentSelected = filteredSelected;
-    if (currentSelected.length === list.length) {
+    if (filteredSelected.length === list.length) {
       setSelected([]);
     } else {
       setSelected(list.map((item: ExampleItem) => item.id));
     }
   };
 
+  // ── Delete ──
   const handleDelete = () => {
-    if (!selected.length) return;
+    if (!filteredSelected.length) return;
     setIsDeleteModalOpen(true);
   };
 
   const handleConfirmDelete = () => {
-    if (!selected.length) return;
-    deleteManyMutation.mutate(selected, {
-      onSuccess: () => {
-        setSelected([]);
-        setIsDeleteModalOpen(false);
+    if (!filteredSelected.length) return;
+    deleteMutation.mutate(
+      { ids: filteredSelected },
+      {
+        onSuccess: () => {
+          setSelected([]);
+          setIsDeleteModalOpen(false);
+        },
       },
-    });
+    );
   };
 
-  const handleCloseDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-  };
-
-  const handleDeleteItem = (id: number) => {
-    setDeleteItemId(id);
-    setIsDeleteItemModalOpen(true);
-  };
-
-  const handleConfirmDeleteItem = () => {
-    if (!deleteItemId) return;
-    deleteManyMutation.mutate([deleteItemId], {
-      onSuccess: () => {
-        setDeleteItemId(null);
-        setIsDeleteItemModalOpen(false);
-      },
-    });
-  };
-
-  const handleCloseDeleteItemModal = () => {
-    setDeleteItemId(null);
-    setIsDeleteItemModalOpen(false);
-  };
-
+  // ── Filter ──
   const handleSortChange = (value: string) => {
-    setSortInput(value);
+    setSort(value);
+    setPage(1);
   };
 
   const handleOrderByChange = (value: OrderBy) => {
-    setOrderByInput(value);
+    setOrderBy(value);
+    setPage(1);
   };
 
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSort(sortInput);
-    setOrderBy(orderByInput);
     setPage(1);
   };
 
@@ -127,8 +104,6 @@ export const useExampleList = () => {
     setSearchInput('');
     setSort('createdAt');
     setOrderBy('ASC');
-    setSortInput('createdAt');
-    setOrderByInput('ASC');
     setPage(1);
   };
 
@@ -139,14 +114,14 @@ export const useExampleList = () => {
   return {
     data: { list, total, page, totalPages },
     status: { isLoading, isFetching, isError },
-    selection: { selected: selectedToUse, selectedSet, toggleSelect, toggleSelectAll },
+    selection: { selected: filteredSelected, selectedSet, toggleSelect, toggleSelectAll },
     filter: {
       searchInput,
       setSearchInput,
       handleSearchClear,
-      sort: sortInput,
+      sort,
       handleSortChange,
-      orderBy: orderByInput,
+      orderBy,
       handleOrderByChange,
       handleSearchSubmit,
       handleReset,
@@ -154,20 +129,14 @@ export const useExampleList = () => {
     actions: {
       handleRefetch,
       handleDelete,
-      handleDeleteItem,
-      isDeleting: deleteManyMutation.isPending,
+      isDeleting: deleteMutation.isPending,
     },
     pagination: { setPage },
     modals: {
       delete: {
         isOpen: isDeleteModalOpen,
-        onClose: handleCloseDeleteModal,
+        onClose: () => setIsDeleteModalOpen(false),
         onConfirm: handleConfirmDelete,
-      },
-      deleteItem: {
-        isOpen: isDeleteItemModalOpen,
-        onClose: handleCloseDeleteItemModal,
-        onConfirm: handleConfirmDeleteItem,
       },
     },
   };

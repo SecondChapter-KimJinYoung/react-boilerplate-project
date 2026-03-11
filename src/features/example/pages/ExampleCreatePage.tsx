@@ -6,8 +6,8 @@ import Input from '@/shared/components/atoms/Input';
 import Textarea from '@/shared/components/atoms/Textarea';
 import FormField from '@/shared/components/molecules/FormField';
 
-import { useCreateExample } from '../hooks/useExample';
 import { useExampleForm } from '../hooks/useExampleForm';
+import { useCreateExample } from '../hooks/useExampleQueries';
 
 const ExampleCreatePage = () => {
   const navigate = useNavigate();

@@ -142,7 +142,6 @@ const ExampleListPage = () => {
         />
       </div>
 
-      {/* 선택 항목 삭제 모달 */}
       <ConfirmDialog
         isOpen={table.modals.delete.isOpen}
         title="선택 항목 삭제"
@@ -150,16 +149,6 @@ const ExampleListPage = () => {
         confirmLabel="삭제"
         onConfirm={table.modals.delete.onConfirm}
         onCancel={table.modals.delete.onClose}
-      />
-
-      {/* 개별 항목 삭제 모달 */}
-      <ConfirmDialog
-        isOpen={table.modals.deleteItem.isOpen}
-        title="항목 삭제"
-        description="이 항목을 삭제하시겠습니까?"
-        confirmLabel="삭제"
-        onConfirm={table.modals.deleteItem.onConfirm}
-        onCancel={table.modals.deleteItem.onClose}
       />
     </>
   );

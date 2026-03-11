@@ -11,23 +11,24 @@ import FormField from '@/shared/components/molecules/FormField';
 import LoadingState from '@/shared/components/molecules/LoadingState';
 
 import { EXAMPLE_STATUS_OPTIONS } from '../constants/example-constants';
-import { useExampleDetail, useUpdateExample } from '../hooks/useExample';
 import { useExampleForm } from '../hooks/useExampleForm';
+import { useExampleDetailQuery, useUpdateExample } from '../hooks/useExampleQueries';
 
 const ExampleEditPage = () => {
   const { id } = useParams<{ id: string }>();
   const exampleId = id ? Number(id) : 0;
   const navigate = useNavigate();
 
-  const detailQuery = useExampleDetail(exampleId);
+  const detailQuery = useExampleDetailQuery(exampleId);
   const updateMutation = useUpdateExample();
 
   const defaultForm = useMemo(() => {
     if (detailQuery.data) {
+      const item = detailQuery.data.payload;
       return {
-        name: detailQuery.data.name,
-        description: detailQuery.data.description || '',
-        status: detailQuery.data.status as 'ACTIVE' | 'INACTIVE',
+        name: item.name,
+        description: item.description || '',
+        status: item.status,
       };
     }
     return { name: '', description: '', status: 'ACTIVE' as const };

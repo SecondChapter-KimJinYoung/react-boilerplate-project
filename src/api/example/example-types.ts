@@ -21,7 +21,7 @@ export interface GetExampleListRequest {
   page?: number;
   size?: number;
   sort?: string;
-  orderBy?: string;
+  orderBy?: 'ASC' | 'DESC';
   keyword?: string;
   status?: 'ACTIVE' | 'INACTIVE';
 }
@@ -38,9 +38,9 @@ export interface PatchExampleRequest {
   status?: 'ACTIVE' | 'INACTIVE';
 }
 
-export type DeleteExampleRequest = {
+export interface DeleteExampleRequest {
   ids: number[];
-};
+}
 
 export type GetExampleListResponse = ListResponse<ExampleItem>;
 export type GetExampleDetailResponse = ApiResponse<ExampleItem>;

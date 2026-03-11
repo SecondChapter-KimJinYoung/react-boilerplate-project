@@ -9,17 +9,6 @@ export const API_ENDPOINTS = {
     DETAIL: (id: number) => `/example/detail/${id}`,
   },
 
-  INQUIRY: {
-    LIST: `/inquiry`, // 관리자 전용
-    MY_LIST: `/inquiry/my-list`,
-    DETAIL: (id: number) => `/inquiry/detail/${id}`,
-    CREATE: `/inquiry`,
-    UPDATE: (id: number) => `/inquiry/${id}`,
-    DELETE: `/inquiry`,
-    ANSWER_CREATE: (id: number) => `/inquiry/detail/${id}/answer`, // 관리자 전용
-    ANSWER_UPDATE: (id: number) => `/inquiry/detail/${id}/answer`, // 관리자 전용
-  },
-
   STATUS: {
     CHECK: HEALTH_CHECK_PATH,
   },
