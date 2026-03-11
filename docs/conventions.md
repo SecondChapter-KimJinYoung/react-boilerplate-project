@@ -12,7 +12,7 @@
 | `chore`    | 설정, 의존성, 빌드 등           | `chore: ESLint 9 마이그레이션`     |
 | `docs`     | 문서                            | `docs: README 환경변수 설명 추가`  |
 | `style`    | 포맷팅 (코드 의미 변경 없음)    | `style: Prettier 적용`             |
-| `test`     | 테스트                          | `test: useExample 훅 단위 테스트`  |
+| `test`     | 테스트                          | `test: useExampleQueries 훅 단위 테스트`  |
 | `perf`     | 성능 개선                       | `perf: 목록 렌더링 최적화`         |
 | `ci`       | CI/CD 설정                      | `ci: test job 타임아웃 변경`       |
 
@@ -39,7 +39,7 @@ prefix: 주요 메시지 (50자 이내)
 | -------- | -------------------------- | ---------------------------------------------- |
 | 페이지   | `XxxPage.tsx`              | `LoginPage.tsx`, `ExampleListPage.tsx`          |
 | 컴포넌트 | `PascalCase.tsx`           | `Button.tsx`, `SearchInput.tsx`                 |
-| 훅       | `useXxx.ts`                | `useExample.ts`, `useExampleForm.ts`            |
+| 훅       | `useXxx.ts`                | `useExampleQueries.ts`, `useExampleForm.ts`     |
 | API 함수 | `[도메인]-api.ts`          | `example-api.ts`                               |
 | API 타입 | `[도메인]-types.ts`        | `api-types.ts`, `example-types.ts`              |
 | 유틸     | `[도메인]-utils.ts`        | `toast-utils.ts`, `regex-utils.ts`              |

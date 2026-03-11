@@ -8,7 +8,6 @@ src/features/user/
 ├── components/     # 이 기능 내부에서만 쓰는 UI 조각
 ├── hooks/          # React Query 훅
 ├── constants/      # 기능 전용 상수
-├── mocks/          # Mock 데이터
 └── utils/          # 기능 전용 유틸
 ```
 
@@ -32,6 +31,16 @@ src/routes/routes.ts    # 경로 상수 추가
 ```
 src/shared/components/  # atoms → molecules → organisms → templates 분류
 ```
+
+## 5. 정적 파일 배치
+
+| 위치 | 번들링 | 해싱 | 용도 |
+|------|--------|------|------|
+| `public/` | X | X | 고정 URL이 필요한 파일 (`favicon.ico`, `robots.txt`, `og-image.png`) |
+| `src/assets/` | O | O | 컴포넌트에서 import해서 사용하는 이미지/폰트 등 |
+
+- `public/` 파일은 `/파일명`으로 직접 접근 (예: `/favicon.ico`)
+- `src/assets/` 파일은 `import logo from '@/assets/logo.png'`으로 사용
 
 > **참고**: 모든 하위 폴더를 처음부터 만들 필요 없습니다.
 > 필요한 폴더만 생성하세요. (예: `auth/`는 현재 `pages/`만 사용)

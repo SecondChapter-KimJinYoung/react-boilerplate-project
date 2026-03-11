@@ -44,6 +44,7 @@ yarn dev        # → http://localhost:5173
 ## 프로젝트 구조
 
 ```
+public/                              # 정적 파일 (빌드 없이 그대로 배포)
 src/
 ├── api/                          # API 레이어
 │   ├── api.ts                    #   공통 CRUD 헬퍼 (get, post, put, patch, delete)
