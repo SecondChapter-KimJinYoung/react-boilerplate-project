@@ -6,6 +6,8 @@ import type {
   PostResponse,
 } from '../api-types';
 
+// ── Entity ──
+
 export interface ExampleItem {
   id: number;
   name: string;
@@ -16,6 +18,8 @@ export interface ExampleItem {
   createdAt: string;
   updatedAt: string;
 }
+
+// ── Request ──
 
 export interface GetExampleListRequest {
   page?: number;
@@ -41,6 +45,8 @@ export interface PatchExampleRequest {
 export interface DeleteExampleRequest {
   ids: number[];
 }
+
+// ── Response ──
 
 export type GetExampleListResponse = ListResponse<ExampleItem>;
 export type GetExampleDetailResponse = ApiResponse<ExampleItem>;
